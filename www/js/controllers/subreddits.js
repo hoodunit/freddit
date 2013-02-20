@@ -1,4 +1,4 @@
-function SubredditsCtrl($scope, $routeParams, $location, $http, database) {
+function SubredditsCtrl($scope, $routeParams, $location, $http) {
   $scope.posts = [];
   $http.jsonp('http://reddit.com/r/lolcats.json?jsonp=JSON_CALLBACK').
     success(function(data){
@@ -6,4 +6,4 @@ function SubredditsCtrl($scope, $routeParams, $location, $http, database) {
     });
 }
 
-SubredditsCtrl.$inject = ['$scope', '$routeParams', '$location', '$http', 'database'];
+SubredditsCtrl.$inject = ['$scope', '$routeParams', '$location', '$http'];

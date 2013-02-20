@@ -1,0 +1,15 @@
+<link rel="stylesheet" type="text/css" href="shared/style_unstable/lists.css" />
+<link rel="stylesheet" type="text/css" href="shared/style/headers.css" />
+
+<section role="region">
+  <header>
+    <h1>Subreddit Images</h1>
+  </header>
+</section>
+<section data-type="list" class="view">
+  <ul>
+    <li ng-repeat="post in posts">
+      <p>{{post.data.title}}</p>
+    </li>
+  </ul>
+</section>

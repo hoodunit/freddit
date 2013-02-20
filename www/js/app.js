@@ -8,20 +8,12 @@ define(["angular"], function() {
       // which HTML and JS to execute when a certain route is requested
       $routeProvider
         .when('/', {
-          templateUrl: 'views/list.html',
-          controller: 'ListCtrl'
+          templateUrl: 'views/subreddits.html',
+          controller: 'SubredditsCtrl'
         })
-        .when('/detail/:id', {
-          templateUrl: 'views/detail.html',
-          controller: 'DetailCtrl'
-        })
-        .when('/add', {
-          templateUrl: 'views/edit.html',
-          controller: 'AddCtrl'
-        })
-        .when('/edit/:id', {
-          templateUrl: 'views/edit.html',
-          controller: 'EditCtrl'
+        .when('/post/:id', {
+          templateUrl: 'views/post.html',
+          controller: 'PostCtrl'
         })
         .otherwise({
           redirectTo: '/'
@@ -30,9 +22,8 @@ define(["angular"], function() {
     .run(function($templateCache, $http) {
       // these are the items that we'll load into cache on app startup
       [
-        'views/detail.html',
-        'views/edit.html',
-        'views/list.html'
+        'views/post.html',
+        'views/subreddits.html'
       ].forEach(function(path) {
         $http.get(path, { cache: $templateCache });
       });

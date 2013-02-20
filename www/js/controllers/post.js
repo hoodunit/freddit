@@ -1,5 +1,4 @@
-function PostCtrl($scope, $routeParams, $location, database) {
-  $scope.item = database.getItemById($routeParams.id);
+function PostCtrl($scope, $routeParams, $location) {
 }
 
-PostCtrl.$inject = ['$scope', '$routeParams', '$location', 'database'];
+PostCtrl.$inject = ['$scope', '$routeParams', '$location'];

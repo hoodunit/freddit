@@ -32,7 +32,6 @@ require.config({
     'js/mobile-nav.js',
     
     // services
-    'js/services/database.js',
     'js/services/dates.js',
     
     // controllers

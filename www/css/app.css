@@ -19,7 +19,7 @@ body {
 .view {
   overflow-x: hidden;
   overflow-y: auto;
-  height: -moz-calc(100% - 5rem);
+  height: 100%;
 }
 .view.detail {
   padding: 1rem;

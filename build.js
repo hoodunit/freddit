@@ -1,12 +1,12 @@
 ({
-    baseUrl: "./www",
+    baseUrl: "./app",
     paths: {
-      jquery: './components/jquery/jquery',
-      angular: './components/angular/angular',
+      jquery: './lib/jquery/jquery',
+      angular: './lib/angular/angular',
       app: './js/app'
     },
     name: "js/main",
-    out: "www/js/main-built.js",
+    out: "app/js/main-built.js",
     optimize: "uglify2",
     uglify2: {
         output: {
@@ -20,4 +20,4 @@
         },
         mangle: false
     }
-})
+});

@@ -19,7 +19,7 @@ var server = connect()
   .use(function(req, res, next) {
     if(req.url !== '/') return next();
     
-    fs.readFile('./www/index.html', 'utf8', function(err, data) {
+    fs.readFile('./app/index.html', 'utf8', function(err, data) {
       if(err) return next(err);
       
       var mainPath = isReleaseBuild ? 'js/main-built.js' : 'js/main.js';
@@ -28,7 +28,7 @@ var server = connect()
       res.end(data);
     });
   })
-  .use(connect.static(path.join(__dirname, 'www')));
+  .use(connect.static(path.join(__dirname, 'app')));
 
 // and set up the server
 var port = process.env.PORT || 8081;

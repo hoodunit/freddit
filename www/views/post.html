@@ -2,11 +2,11 @@
 <section role="region">
   <header>
     <a ng-tap="$navigate.go('/', 'slide', true)"><span class="icon icon-back">back</span></a>
-    <h1>{{item.title}}</h1>
   </header>
 </section>
 <section class="view detail">
-  <h1>{{item.title}}</h1>
-  <p>{{item.description}}</p>
-  <p>{{item.date.toDateString()}}</p>
+	<img ng-src="{{infoPost.url}}"></image>
+	<p>{{infoPost.title}}</p>
+	<p>{{infoPost.num_comments}}</p>
+	<p>{{infoPost.score}}</p>
 </section>

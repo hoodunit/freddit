@@ -11,6 +11,7 @@
     <li ng-repeat="post in posts">
       <p>{{post.data.title}}</p>
       <p><img ng-src="{{post.data.url}}"/></p>
+      <a href="#/post/{{post.data.id}}">Go to image</a>
     </li>
   </ul>
 </section>

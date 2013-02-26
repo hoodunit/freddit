@@ -1,5 +1,6 @@
 <link rel="stylesheet" type="text/css" href="shared/style_unstable/lists.css" />
 <link rel="stylesheet" type="text/css" href="shared/style/headers.css" />
+<link rel="stylesheet" type="text/css" href="shared/style/tile_view.css" />
 
 <section role="region">
   <header>
@@ -7,11 +8,12 @@
   </header>
 </section>
 <section class="view">
-  <ul>
-    <li ng-repeat="post in posts">
-      <p>{{post.data.title}}</p>
-      <p><img ng-src="{{post.data.url}}"/></p>
-      <a href="#/post/{{post.data.id}}">Go to image</a>
-    </li>
-  </ul>
+  <div class="image_tile" ng-repeat="post in posts" style="background-image: url({{post.data.url}});">
+    <div class="proportional_helper"><!-- People call me fat :( --></div>
+
+    <div class="image_tile_title" >
+      <a href="#/post/{{post.data.id}}"><!-- I fill the whole area --></a>
+      <h2>{{post.data.title}}<h2>
+    </div>
+  </div>
 </section>

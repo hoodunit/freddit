@@ -1,0 +1,43 @@
+.image_tile
+{
+    position: relative;
+    float: left;
+    width: 50%;
+    background-position: center;
+    background-size: cover;
+}
+
+.image_tile a
+{
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.proportional_helper
+{
+    margin-top: 100%;
+    height: 100%;
+}
+
+.image_tile_title
+{
+    background-color: #C66A00;
+    opacity: 0.8;
+    height: 3.8rem;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    color: white;
+    overflow-y: hidden;
+}
+
+.image_tile_title h2
+{
+    font: 1.75rem "MozTT",Sans-serif;
+    margin: 2px;
+    opacity: 1.0;
+    color: #FFFFFF;
+    text-decoration: none;
+}

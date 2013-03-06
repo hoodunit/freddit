@@ -14,6 +14,10 @@ define(['angular', 'js/services/services', 'js/directives/directives',
            .config(['$routeProvider', function($routeProvider) {
                  $routeProvider
                    .when('/', {
+                     templateUrl: 'views/overview.html',
+                     controller: 'OverviewCtrl'
+                   })
+                   .when('/r/:id', {
                      templateUrl: 'views/subreddits.html',
                      controller: 'SubredditsCtrl'
                    })
@@ -28,8 +32,10 @@ define(['angular', 'js/services/services', 'js/directives/directives',
                .run(function($templateCache, $http) {
                  // Loaded into cache on app startup
                  [
+                 	'views/overview.html',
                    'views/post.html',
                    'views/subreddits.html'
+                   
                  ].forEach(function(path) {
                    $http.get(path, { cache: $templateCache });
                  });

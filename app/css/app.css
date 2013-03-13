@@ -24,7 +24,12 @@ body {
   bottom: 0;
   position: absolute;
 }
+
 .view.detail {
-  padding: 1rem;
   font-size: 1.5rem;
+}
+
+.view.detail img{
+  height: auto;
+  max-width: 100%;
 }

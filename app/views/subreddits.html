@@ -10,10 +10,11 @@
 </section>
 <section class="view">
   <div class="image_tile" ng-repeat="post in posts" style="background-image: url({{post.data.url}});">
+    <a href="#/post/{{post.data.id}}"><!-- I fill the whole area --></a>
     <div class="proportional_helper"><!-- People call me fat :( --></div>
 
     <div class="image_tile_title" >
-      <a href="#/post/{{post.data.id}}"><!-- I fill the whole area --></a>
+      
       <h2>{{post.data.title}}<h2>
     </div>
   </div>

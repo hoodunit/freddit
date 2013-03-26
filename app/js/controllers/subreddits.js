@@ -3,7 +3,7 @@ define(function () {
 
   function SubredditsCtrl($scope, $routeParams, $location, $http) {
     $scope.posts = [];
-    $http.jsonp('http://reddit.com/r/lolcats.json?jsonp=JSON_CALLBACK').
+    $http.jsonp('http://reddit.com/r/' + $routeParams.id + '.json?jsonp=JSON_CALLBACK').
       success(function(data){
         for (var i in data.data.children)
         {

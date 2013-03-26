@@ -8,6 +8,11 @@ html {
 }
 
 body {
+  background: url("../img/ff_darknoise.png") repeat scroll 0 0 #222222;
+  color: #EEEEEE;
+}
+
+body {
   font-family: "MozTT", sans-serif;
   margin: 0;
   padding: 0;

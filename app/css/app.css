@@ -25,11 +25,3 @@ body {
   position: absolute;
 }
 
-.view.detail {
-  font-size: 1.5rem;
-}
-
-.view.detail img{
-  height: auto;
-  max-width: 100%;
-}

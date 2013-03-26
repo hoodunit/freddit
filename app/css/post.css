@@ -1,0 +1,21 @@
+.view.detail {
+  font-size: 1.5rem;
+  animation: myfirst 1s;
+}
+
+body {
+  background: url("../img/ff_darknoise.png") repeat scroll 0 0 #222222;
+  color: #EEEEEE;
+}
+
+.view.detail img{
+  animation: fading 1s;
+  -moz-animation: fading 1s;
+  height: auto;
+  max-width: 100%;
+}
+
+.fading_button{
+  animation: fading 1s;
+}
+

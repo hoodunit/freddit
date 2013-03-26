@@ -17,6 +17,7 @@ define(function () {
           }
         }
         $scope.posts = data.data.children;
+        $scope.page_title = $routeParams.id;
       });
   }
 

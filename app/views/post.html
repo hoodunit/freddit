@@ -2,12 +2,14 @@
 <link rel="stylesheet" type="text/css" href="css/post.css">
 <section role="region">
   <header>
-    <a ng-tap="$navigate.go('/r/{{subreddit}}', 'slide', true)"><span class="icon icon-back">back</span></a>
+    <a ng-tap="$navigate.go('/r/{{infoPost.subreddit}}', 'slide', true)"><span class="icon icon-back">back</span></a>
+    <h1>{{infoPost.subreddit}}</h1>
   </header>
 </section>
 <section class="view detail">
 	<img ng-src="{{infoPost.url}}"></image>
-	<p>{{infoPost.title}}</p>
-	<p>{{infoPost.num_comments}}</p>
-	<p>{{infoPost.score}}</p>
+	<div class="title">{{infoPost.title}}</div>
+	<div class="author">{{infoPost.author}}</div> 
+	<div class="comments">{{infoPost.num_comments}}</div>
+	<div class="score">{{infoPost.score}}</div>
 </section>

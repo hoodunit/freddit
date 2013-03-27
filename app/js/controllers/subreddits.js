@@ -3,6 +3,7 @@ define(function () {
 
   function SubredditsCtrl($scope, $routeParams, $location, $http) {
     $scope.posts = [];
+    $scope.page_title = $routeParams.id;
     $http.jsonp('http://reddit.com/r/' + $routeParams.id + '.json?jsonp=JSON_CALLBACK').
       success(function(data){
         for (var i in data.data.children)
@@ -17,7 +18,6 @@ define(function () {
           }
         }
         $scope.posts = data.data.children;
-        $scope.page_title = $routeParams.id;
       });
   }
 

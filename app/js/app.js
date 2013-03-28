@@ -11,7 +11,8 @@ define(['angular', 'js/services/services', 'js/directives/directives',
                                    'providers',
                                    'filters',
                                    'controllers'])
-           .config(['$routeProvider', function($routeProvider) {
+               .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+                 $locationProvider.html5Mode(true);
                  $routeProvider
                    .when('/', {
                      templateUrl: 'views/overview.html',
@@ -32,7 +33,7 @@ define(['angular', 'js/services/services', 'js/directives/directives',
                .run(function($templateCache, $http) {
                  // Loaded into cache on app startup
                  [
-                 	'views/overview.html',
+                   'views/overview.html',
                    'views/post.html',
                    'views/subreddits.html'
                    
@@ -43,6 +44,8 @@ define(['angular', 'js/services/services', 'js/directives/directives',
 
          app.controller('MainCtrl', function($scope, $navigate) {
            $scope.$navigate = $navigate;
+           console.log(window.location);
+           console.log(window.location.search);
            $navigate.go((window.location.hash || '#/').substr(1), 'none');
          });
          
@@ -74,4 +77,4 @@ define(['angular', 'js/services/services', 'js/directives/directives',
          });
          
          return app;
-});
+       });

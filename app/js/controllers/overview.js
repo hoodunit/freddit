@@ -1,58 +1,38 @@
 define(function () {
   'use strict';
 
-  function OverviewCtrl($scope, $routeParams, $location, $http, User) {
+  function OverviewCtrl($scope, $routeParams, $location, $http, RedditAPI) {
     var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
 
-    $scope.loggedIn = User.loggedIn;
+    $scope.loggedIn = RedditAPI.loggedIn;
     $scope.login = function(){
-      User.login(function(){
+      RedditAPI.login(function(){
         $scope.$apply();
-        $scope.loadUserSubreddits();
+        $scope.userName = RedditAPI.getUserName();
+        RedditAPI.loadUserSubreddits(function(subredditNames){
+          $scope.loadSubreddits(subredditNames);
+        });
       });
     };
 
     $scope.logout = function(){
-      User.logout(function(){
+      RedditAPI.logout(function(){
         $scope.loadSubreddits(DEFAULT_SUBREDDITS);
       });
     }
 
-    $scope.userName = null;
-
-    $scope.loadUserSubreddits = function(){
-      $scope.userName = User.getUserName();
-      
-      var url = 'http://localhost:8081/oauth/subreddits/mine/subscriber.json';
-      var headers = {'Authorization': 'bearer ' + User.accessToken()};
-
-      $http.get(url, {headers: headers}).success(function(subscribedData){
-        var subredditsData = subscribedData.data.children;
-        var subreddits = [];
-        for(var i = 0; i < subredditsData.length; i++){
-          subreddits.push(subredditsData[i].data.display_name);
-        }
-        $scope.loadSubreddits(subreddits);
-      });
-    }
-
-    $scope.loadSubreddits = function(subreddits){
+    $scope.loadSubreddits = function(subredditNames){
       $scope.subreddits = [];
-      for(var i = 0, subredditName; subredditName = subreddits[i]; i++){
-        var url = 'http://reddit.com/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK';
-        $http.jsonp(url).success(function(data){
-          var firstPost = data.data.children[0];
-          var subreddit = {'name': firstPost.data.subreddit,
-                           'first_post_url': firstPost.data.url};
-          $scope.subreddits.push(subreddit);
-        });
-      }
+      for(var i = 0, subredditName; subredditName = subredditNames[i]; i++){
+        var subreddit = RedditAPI.getSubreddit(subredditName);
+        $scope.subreddits.push(subreddit);
+      };
     }
 
     $scope.loadSubreddits(DEFAULT_SUBREDDITS);
   }
 
-  OverviewCtrl.$inject = ['$scope', '$routeParams', '$location', '$http', 'User'];
+  OverviewCtrl.$inject = ['$scope', '$routeParams', '$location', '$http', 'RedditAPI'];
 
   return OverviewCtrl;
 

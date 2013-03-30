@@ -1,10 +1,10 @@
 /**
  * Base service. New services need to be registered here.
  **/
-define(['angular', 'js/services/user'], 
-       function (angular, UserService) {
+define(['angular', 'js/services/reddit_api'], 
+       function (angular, RedditAPIService) {
 	 var services = angular.module('services', []);
-         services.service('User', UserService);
+         services.service('RedditAPI', RedditAPIService);
  	 return services;
        });
 

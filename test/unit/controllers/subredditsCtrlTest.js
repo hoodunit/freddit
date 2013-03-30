@@ -2,30 +2,32 @@ define(['angular', 'mocks'], function () {
   'use strict';
 
   describe('SubredditsCtrl', function () {
-    var scope, $httpBackend;
-    var subredditPosts = [{data: {title: 'postTitle', url: 'url'}}];
-    var subredditResponse = {data: {children: subredditPosts}};
+    var scope;
+
+    var post1 = {'id': '1', 'url': 'asdf', 'title': 'mytitle'};
+    var post2 = {'id': '1', 'url': 'asdf', 'title': 'mytitle'};
+    var subredditPosts = [post1, post2];
 
     beforeEach(function () {
-      module('controllers');
-      
-      inject(function(_$httpBackend_, $rootScope, $controller) {
-        $httpBackend = _$httpBackend_;
-        $httpBackend.expectJSONP(
-          'http://reddit.com/r/lolcats.json?jsonp=JSON_CALLBACK').
-          respond(subredditResponse);
+      module('controllers', 'services');
 
+      inject(function($rootScope, $controller, RedditAPI) {
         scope = $rootScope.$new();
+
+        RedditAPI.getSubredditPosts = function(){ return subredditPosts;};
+
 	$controller('SubredditsCtrl', {
-	  $scope : scope
+	  $scope: scope,
+          $routeParams: {id: 'lolcats'}
 	});
       });			
     });
 
-    it('should fetch the latest lolcats posts', function () {
-      expect(scope.posts).toEqual([]);
-      $httpBackend.flush();
+    it('should set subredditName from route URL', function(){
+      expect(scope.subredditName).toEqual('lolcats');
+    });
 
+    it('should fetch the latest lolcats posts', function() {
       expect(scope.posts).toEqual(subredditPosts);
     });
   });

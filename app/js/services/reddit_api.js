@@ -24,7 +24,9 @@ define(function () {
       var win = window.open(login_url, "Reddit Sign In", 'width=800, height=600'); 
 
       var pollTimer = window.setInterval(function() { 
-        if(win.document.URL.indexOf(REDIRECT_URL) != -1) {
+        if(win.document
+           && win.document.URL
+           && win.document.URL.indexOf(REDIRECT_URL) != -1) {
           var data = JSON.parse(win.document.body.textContent);
           accessToken = data.access_token;
           console.log('Access token:', accessToken);

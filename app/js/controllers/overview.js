@@ -18,14 +18,14 @@ define(function () {
       });
     }
 
-    $scope.loadUserSubreddits = function(){
-      var url = 'http://localhost:8081/oauth/api/v1/me';
-      var headers = {'Authorization': 'bearer ' + User.accessToken()};
-      $http.get(url, {headers: headers}).success(function(userData){
-        $scope.userName = userData.name
-      });
+    $scope.userName = null;
 
-      url = 'http://localhost:8081/oauth/subreddits/mine/subscriber.json';
+    $scope.loadUserSubreddits = function(){
+      $scope.userName = User.getUserName();
+      
+      var url = 'http://localhost:8081/oauth/subreddits/mine/subscriber.json';
+      var headers = {'Authorization': 'bearer ' + User.accessToken()};
+
       $http.get(url, {headers: headers}).success(function(subscribedData){
         var subredditsData = subscribedData.data.children;
         var subreddits = [];

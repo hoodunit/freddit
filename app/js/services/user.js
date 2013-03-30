@@ -1,11 +1,12 @@
 define(function () {
   'use strict';
 
-  function User(){
-    var accessToken = null;
+  function User($http, $q){
+    var _accessToken = null;
+    var userName = null;
 
     this.accessToken = function(){
-      return accessToken;
+      return _accessToken;
     };
 
     this.login = function(callback) {
@@ -25,8 +26,8 @@ define(function () {
       var pollTimer = window.setInterval(function() { 
         if(win.document.URL.indexOf(REDIRECT_URI) != -1) {
           var data = JSON.parse(win.document.body.textContent);
-          accessToken = data.access_token;
-          console.log('Access token:', accessToken);
+          _accessToken = data.access_token;
+          console.log('Access token:', _accessToken);
           window.clearInterval(pollTimer);
           win.close();
           callback();
@@ -34,15 +35,28 @@ define(function () {
       }, 500);
     };
 
+    this.getUserName = function(){
+      userName = $q.defer();
+      var url = 'http://localhost:8081/oauth/api/v1/me';
+      var headers = {'Authorization': 'bearer ' + _accessToken};
+      $http.get(url, {headers: headers}).success(function(userData){
+        userName.resolve(userData.name);
+      });
+
+      return userName.promise;
+    };
+
     this.logout = function(callback){
-      accessToken = null;
+      _accessToken = null;
       callback();
     };
 
     this.loggedIn = function(){
-      return accessToken != null;
+      return _accessToken != null;
     };
   }
+
+  User.$inject = ['$http', '$q'];
 
   return User;
 });

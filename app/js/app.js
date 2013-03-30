@@ -44,8 +44,6 @@ define(['angular', 'js/services/services', 'js/directives/directives',
 
          app.controller('MainCtrl', function($scope, $navigate) {
            $scope.$navigate = $navigate;
-           console.log(window.location);
-           console.log(window.location.search);
            $navigate.go((window.location.hash || '#/').substr(1), 'none');
          });
          

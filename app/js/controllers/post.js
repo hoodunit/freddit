@@ -1,15 +1,12 @@
 define(function () {
   'use strict';
 
-  function PostCtrl($http, $scope, $routeParams, $location) {
-    $scope.infoPost = [];
-    $http.jsonp('http://www.reddit.com/by_id/t3_'+ $routeParams.id + '.json?jsonp=JSON_CALLBACK').
-      success(function(object){
-        $scope.infoPost = object.data.children[0].data;
-      });
+  function PostCtrl($scope, $routeParams, RedditAPI) {
+    var postId = $routeParams.id;
+    $scope.infoPost = RedditAPI.getPost(postId);
   }
 
-  PostCtrl.$inject = ['$http','$scope', '$routeParams', '$location'];
+  PostCtrl.$inject = ['$scope', '$routeParams', 'RedditAPI'];
 
   return PostCtrl;
 });

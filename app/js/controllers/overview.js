@@ -1,7 +1,7 @@
 define(function () {
   'use strict';
 
-  function OverviewCtrl($scope, $routeParams, $location, $http, RedditAPI) {
+  function OverviewCtrl($scope, RedditAPI) {
     var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
 
     $scope.loggedIn = RedditAPI.loggedIn;
@@ -24,7 +24,8 @@ define(function () {
     $scope.loadSubreddits = function(subredditNames){
       $scope.subreddits = [];
       for(var i = 0, subredditName; subredditName = subredditNames[i]; i++){
-        var subreddit = RedditAPI.getSubreddit(subredditName);
+        var imageUrl = RedditAPI.getSubredditFirstImageUrl(subredditName);
+        var subreddit = {'name': subredditName, 'first_image_url': imageUrl};
         $scope.subreddits.push(subreddit);
       };
     }
@@ -32,7 +33,7 @@ define(function () {
     $scope.loadSubreddits(DEFAULT_SUBREDDITS);
   }
 
-  OverviewCtrl.$inject = ['$scope', '$routeParams', '$location', '$http', 'RedditAPI'];
+  OverviewCtrl.$inject = ['$scope', 'RedditAPI'];
 
   return OverviewCtrl;
 

@@ -13,7 +13,7 @@
 </section>
 
 <section class="view">
-  <div class="image_tile" ng-repeat="subreddit in subreddits" style="background-image: url({{subreddit.first_post_url}});">
+  <div class="image_tile" ng-repeat="subreddit in subreddits" style="background-image: url({{subreddit.first_image_url}});">
     <a href="" ng-tap="$navigate.go('r/{{subreddit.name}}', 'slide', false)"></a>
     <div class="proportional_helper"></div>
 

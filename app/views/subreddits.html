@@ -5,17 +5,17 @@
 <section role="region">
   <header>
   <a ng-tap="$navigate.go('/', 'slide', true)"><span class="icon icon-back">back</span></a>
-    <h1>{{page_title}}</h1>
+    <h1>{{subredditName}}</h1>
   </header>
 </section>
 <section class="view">
-  <div class="image_tile" ng-repeat="post in posts" style="background-image: url({{post.data.url}});">
-    <a href="" ng-tap="$navigate.go('/post/{{post.data.id}}', 'slide', false)"><!-- I fill the whole area --></a>
-    <div class="proportional_helper"><!-- People call me fat :( --></div>
+  <div class="image_tile" ng-repeat="post in posts" style="background-image: url({{post.url}});">
+    <a href="" ng-tap="$navigate.go('/post/{{post.id}}', 'slide', false)"></a>
+    <div class="proportional_helper"</div>
 
     <div class="image_tile_title" >
-      <a href="" ng-tap="$navigate.go('/post/{{post.data.id}}', 'slide', false)"><!-- I fill the whole area --></a>
-      <h2>{{post.data.title}}<h2>
+      <a href="" ng-tap="$navigate.go('/post/{{post.id}}', 'slide', false)"></a>
+      <h2>{{post.title}}<h2>
     </div>
   </div>
 </section>

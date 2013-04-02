@@ -21,20 +21,21 @@ define(function () {
             + '&client_id=' + CLIENT_ID
             + '&scope=' + SCOPE
             + '&redirect_uri=' + REDIRECT_URL;
-      var win = window.open(login_url, "Reddit Sign In", 'width=800, height=600'); 
 
-      var pollTimer = window.setInterval(function() { 
-        if(win.document
-           && win.document.URL
-           && win.document.URL.indexOf(REDIRECT_URL) != -1) {
-          var data = JSON.parse(win.document.body.textContent);
-          accessToken = data.access_token;
-          console.log('Access token:', accessToken);
-          window.clearInterval(pollTimer);
-          win.close();
-          callback();
+      function receiveAccessToken(event){
+        if (event.origin !== REDIRECT_URL){
+          console.log('Received message from invalid origin:', event.origin);
+          console.log(event);
+          return;
         }
-      }, 500);
+        console.log('Received message:', event);
+        accessToken = event.data.access_token;
+        console.log('Access token:', accessToken);
+        callback();
+      }
+
+      window.addEventListener("message", receiveAccessToken, false);
+      window.open(login_url, 'reddit_oauth_signin'); 
     };
 
     this.getUserName = function(){

@@ -52,15 +52,20 @@ function returnAccessToken(clientResponse, query){
   var REDIRECT_URI = 'http://localhost:8081';
   var ACCESS_TOKEN_URL = 'https://ssl.reddit.com/api/v1/access_token';
   var auth = {user: CLIENT_ID, pass: CLIENT_SECRET};
-  var params = {'state': 'w9824laksgrewo0',// 'scope': 'identity',
+  var params = {'state': 'w9824laksgrewo0',
                 'client_id': CLIENT_ID, 'redirect_uri': REDIRECT_URI,
                 'code': query.code, 'grant_type': 'authorization_code'};
 
   request.post({url: ACCESS_TOKEN_URL, auth: auth, form: params},
                function (oauth_err, oauth_resp, oauth_body) {
-                 clientResponse.writeHead(200, { 'Content-Type': 'application/json'});
-                 clientResponse.write(oauth_body);
-                 clientResponse.end();
+                 fs.readFile('./app/oauth.html', 'utf8', function(err, data) {
+                   if(err) return next(err);
+                   
+                   clientResponse.writeHead(200, { 'Content-Type': 'text/html'});
+                   clientResponse.write(data);
+                   clientResponse.write(oauth_body);
+                   clientResponse.end();
+                 });
                });
 }
 

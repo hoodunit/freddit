@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Freddit</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <meta charset="UTF-8"/>
+    <script type="text/javascript">
+      function returnAccessCode(){
+        var ORIGIN_URL = 'http://localhost:8081';
+        var accessTokenData = JSON.parse(document.body.innerHTML);
+
+        window.opener.postMessage(accessTokenData, ORIGIN_URL);
+
+        window.close();
+      }
+
+      window.onload = returnAccessCode;
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

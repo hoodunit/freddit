@@ -15,6 +15,7 @@ define(function () {
     var accessToken = null;
 
     this.login = function(callback) {
+      console.log('login');
       var login_url = REDDIT_SSL_URL + '/api/v1/authorize'
             + '?state=' + STATE
             + '&response_type=' + RESPONSE_TYPE
@@ -32,7 +33,9 @@ define(function () {
           console.log('Access token:', accessToken);
           window.clearInterval(pollTimer);
           win.close();
-          callback();
+          if(accessToken){
+            callback();
+          }
         }
       }, 500);
     };

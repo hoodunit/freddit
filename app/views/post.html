@@ -8,18 +8,25 @@
 </section>
 <section class="view detail">
   <div class="image_container" style="background-image: url({{infoPost.url}})">
-    <div class="fading_button" onClick="alert('This function should call the previous image...');">
-      <div class="vertically_centered previous_button">&lt;</div>
+    <div class="fading_button">
+      <a href="" ng-tap="$navigate.go('/post/{{nextPost}}', 'slide', true)"></a>
+      <div class="proportional_helper"></div>
+      <div class="vertically_centered previous_button">
+        <a href="" ng-tap="$navigate.go('/post/{{nextPost}}', 'slide', true)"></a>
+        &lt;
+      </div>
     </div>
-    <div class="fading_button" onClick="alert('This function should call the next image...');">
-      <div class="vertically_centered next_button">&gt;</div>
+    <div class="fading_button">
+      <a href="" ng-tap="$navigate.go('/post/{{previousPost}}', 'slide', false)"></a>
+      <div class="proportional_helper"></div>
+      <div class="vertically_centered next_button">
+        <a href="" ng-tap="$navigate.go('/post/{{previousPost}}', 'slide', false)"></a>
+        &gt;
+      </div>
     </div>
   </div>
   <div class="title">{{infoPost.title}}</div>
   <div class="author">{{infoPost.author}}</div> 
   <div class="comments">{{infoPost.num_comments}}</div>
   <div class="score">{{infoPost.score}}</div>
-
-  	<a ng-tap="$navigate.go('/post/{{nextPost}}', 'slide', false)">Next Post</a>
-	<a ng-tap="$navigate.go('/post/{{previousPost}}', 'slide', true)">Previous Post</a>
 </section>

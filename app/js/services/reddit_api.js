@@ -61,9 +61,16 @@ define(function () {
     this.getSubredditFirstImageUrl = function(subredditName){
       var imageUrl = $q.defer();
       var url = REDDIT_URL + '/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK&limit=1';
+      var extractDirectImageLink = this.extractDirectImageLink;
       $http.jsonp(url).success(function(data){
         var firstPost = data.data.children[0];
-        imageUrl.resolve(firstPost.data.url);
+        var directLink = extractDirectImageLink(firstPost.data.url);
+        if (directLink == null) {
+          // TODO: do something if we are unable to get the first image
+          imageUrl.resolve('');
+        } else {
+          imageUrl.resolve(directLink);
+        }
       });
 
       return imageUrl.promise;
@@ -97,8 +104,6 @@ define(function () {
     this.extractDirectImageLink = function(url) {
       var res;
 
-      // TODO: heuristic: anything that ends with .gif/.jpg/.png is a direct link ?!
-
       // imgur
       if ((res = /(.*)imgur.com\/(.*)/.exec(url))) {
         if (/i\./.exec(res[1])) {
@@ -111,6 +116,12 @@ define(function () {
       if ((res = /(.*)fbcdn(.*)\/(.*)\.(.*)/.exec(url))) {
         return url;
       }
+
+      // heuristic: .jpg/.gif/.png are direct links!
+      if ((res = /(.*)\.jpg|(.*)\.gif|(.*)\.png/.exec(url))) {
+        return url;
+      }
+
       return null;
     };
 

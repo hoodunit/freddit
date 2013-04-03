@@ -60,18 +60,25 @@ define(function () {
 
     this.getSubredditFirstImageUrl = function(subredditName){
       var imageUrl = $q.defer();
-      var url = REDDIT_URL + '/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK&limit=1';
+      var url = REDDIT_URL + '/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=1';
       $http.jsonp(url).success(function(data){
-        var firstPost = data.data.children[0];
-        imageUrl.resolve(firstPost.data.url);
+        
+    	//var postsData = data.data.children;
+        //for(var i = 0;i < postsData.length ; i++){
+        	var firstPost = data.data.children[0];
+        	imageUrl.resolve(firstPost.data.url);
+        //	if(firstPost.data.over_18 === false) {
+        //		return imageUrl.promise;
+        //	}
+        	//console.log("don't choose this one");	
+      //}
       });
-
       return imageUrl.promise;
     };
 
     this.getSubredditPosts = function(subredditName, callback){
       var posts = $q.defer();
-      var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK';
+      var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true';
       var extractDirectImageLink = this.extractDirectImageLink;
 
       $http.jsonp(url).success(function(data){
@@ -80,6 +87,7 @@ define(function () {
 
         for(var i = 0; i < postsData.length; i++){
           var postData = postsData[i];
+          
           var directLink = extractDirectImageLink(postData.data.url);
           if(directLink !== null){
             var post = {'id': postData.data.id,

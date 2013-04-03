@@ -69,6 +69,7 @@ define(function () {
       $http.jsonp(url).success(function(data){
         var firstPost = data.data.children[0];
         var directLink = extractDirectImageLink(firstPost.data.url);
+        //console.log(firstPost.data.url);
         if (directLink == null) {
           // TODO: do something if we are unable to get the first image
           imageUrl.resolve('');
@@ -91,7 +92,9 @@ define(function () {
 
         for(var i = 0; i < postsData.length; i++){
           var postData = postsData[i];
+          console.log('srcLink: '+postData.data.url);
           var directLink = extractDirectImageLink(postData.data.url);
+          console.log('directLink: '+directLink);
           if(directLink !== null){
             var post = {'id': postData.data.id,
                         'url': directLink,
@@ -123,9 +126,27 @@ define(function () {
       if ((res = /(.*)fbcdn(.*)\/(.*)\.(.*)/.exec(url))) {
         return url;
       }
-
+      // flickr
+      if (res = /(.*)flickr\.com(.*)/.exec(url)) {
+        if (/farm(.*)staticflickr\.com(.*)\.(.*)/.exec(url)) {
+          return url;
+        }
+        // TODO: use their API to get direct link?
+        return null;
+      }
+      // tumblr
+      if (res = /(.*)\.tumblr\.com\/(.*)/.exec(url)) {
+        if (/(.*)\.(.*)/.exec(res[2])) {
+          return url;
+        }
+        return null;
+      }
+      // cheezburger
+      if (res = /(.*)i\.chzbgr\.com(.*)/.exec(url)) {
+        return url;
+      }
       // heuristic: .jpg/.gif/.png are direct links!
-      if ((res = /(.*)\.jpg|(.*)\.gif|(.*)\.png/.exec(url))) {
+      if (res = /(.*)\.jpg|(.*)\.gif|(.*)\.png/.exec(url)) {
         return url;
       }
 

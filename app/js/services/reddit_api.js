@@ -15,6 +15,7 @@ define(function () {
     var accessToken = null;
 
     this.login = function(callback) {
+      console.log('login');
       var login_url = REDDIT_SSL_URL + '/api/v1/authorize'
             + '?state=' + STATE
             + '&response_type=' + RESPONSE_TYPE

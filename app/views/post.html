@@ -7,9 +7,17 @@
   </header>
 </section>
 <section class="view detail">
-	<img ng-src="{{infoPost.url}}"></image>
-	<div class="title">{{infoPost.title}}</div>
-	<div class="author">{{infoPost.author}}</div> 
-	<div class="comments">{{infoPost.num_comments}}</div>
-	<div class="score">{{infoPost.score}}</div>
+  <div class="image_container" style="background-image: url({{infoPost.url}})">
+    <div class="fading_button" onClick="alert('This function should call the previous image...');">
+      <div class="vertically_centered previous_button">&lt;</div>
+    </div>
+    <div class="fading_button" onClick="alert('This function should call the next image...');">
+      <div class="vertically_centered next_button">&gt;</div>
+    </div>
+  </div>
+  <div class="title">{{infoPost.title}}</div>
+  <div class="author">{{infoPost.author}}</div> 
+  <div class="comments">{{infoPost.num_comments}}</div>
+  <div class="score">{{infoPost.score}}</div>
+
 </section>

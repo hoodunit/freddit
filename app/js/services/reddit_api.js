@@ -1,7 +1,7 @@
 define(function () {
   'use strict';
 
-  function RedditAPI($http, $q){
+  function RedditAPI($http, $q, $window){
     var STATE = 'f398dasf8wet89823t';
     var RESPONSE_TYPE = 'code';
     var CLIENT_ID = 'URa40XpCminqLw';
@@ -18,7 +18,6 @@ define(function () {
 
 
     this.login = function(callback) {
-      console.log('login');
       var login_url = REDDIT_SSL_URL + '/api/v1/authorize'
             + '?state=' + STATE
             + '&response_type=' + RESPONSE_TYPE
@@ -26,7 +25,12 @@ define(function () {
             + '&scope=' + SCOPE
             + '&redirect_uri=' + REDIRECT_URL;
 
-      function receiveAccessToken(event){
+      $window.addEventListener("message", this.receiveAccessToken(callback), false);
+      $window.open(login_url, 'reddit_oauth_signin'); 
+    };
+
+    this.receiveAccessToken = function(callback){
+      return function(event){
         if (event.origin !== REDIRECT_URL){
           console.log('Received message from invalid origin:', event.origin);
           console.log(event);
@@ -37,9 +41,6 @@ define(function () {
         console.log('Access token:', accessToken);
         callback();
       }
-
-      window.addEventListener("message", receiveAccessToken, false);
-      window.open(login_url, 'reddit_oauth_signin'); 
     };
 
     this.getUserName = function(){
@@ -201,9 +202,7 @@ define(function () {
 
   }
 
-
-
-  RedditAPI.$inject = ['$http', '$q'];
+  RedditAPI.$inject = ['$http', '$q', '$window'];
 
   return RedditAPI;
 });

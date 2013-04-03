@@ -20,4 +20,6 @@
   <div class="comments">{{infoPost.num_comments}}</div>
   <div class="score">{{infoPost.score}}</div>
 
+  	<a ng-tap="$navigate.go('/post/{{nextPost}}', 'slide', false)">Next Post</a>
+	<a ng-tap="$navigate.go('/post/{{previousPost}}', 'slide', true)">Previous Post</a>
 </section>

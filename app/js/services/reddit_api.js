@@ -14,6 +14,9 @@ define(function () {
 
     var accessToken = null;
 
+    var subRedditPosts = null;
+
+
     this.login = function(callback) {
       console.log('login');
       var login_url = REDDIT_SSL_URL + '/api/v1/authorize'
@@ -70,11 +73,11 @@ define(function () {
       return imageUrl.promise;
     };
 
-    this.getSubredditPosts = function(subredditName, callback){
+    this.getSubredditPosts = function(subredditName){
       var posts = $q.defer();
       var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK';
       var extractDirectImageLink = this.extractDirectImageLink;
-
+      subRedditPosts = [];
       $http.jsonp(url).success(function(data){
         var postsData = data.data.children;
         var parsedPosts = [];
@@ -87,6 +90,9 @@ define(function () {
                         'url': directLink,
                         'title': postData.data.title};
             parsedPosts.push(post);
+
+            //Global
+            subRedditPosts.push(post);
           }
         }
         posts.resolve(parsedPosts);
@@ -139,7 +145,32 @@ define(function () {
         });
       return post.promise;
     };
+
+
+    this.getPosts = function(postId){
+        var previousId = 0;
+        var nextId = 0;
+        for(var i = 0 ; i < subRedditPosts.length ; i++){
+            if (subRedditPosts[i].id == postId) {
+              //console.log("hi");
+              if(i == (subRedditPosts.length - 1)){
+                nextId = subRedditPosts[(subRedditPosts.length - 1)].id;
+              } else {
+                nextId = subRedditPosts[i+1].id;
+              }
+              break;
+            };
+            previousId = subRedditPosts[i].id;
+        }
+        var ids = [];
+        ids.push(previousId);
+        ids.push(nextId);
+        return ids;
+    };
+
   }
+
+
 
   RedditAPI.$inject = ['$http', '$q'];
 

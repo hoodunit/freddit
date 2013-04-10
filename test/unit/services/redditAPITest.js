@@ -9,8 +9,9 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
     }));
 
     describe('login', function() {
+      var VALID_ORIGIN = 'http://localhost:8081';
 
-      it('should open a new window and set a listen event when logging in', inject(function(RedditAPI, $window) {
+      it('should open a new window and listen for response messages', inject(function(RedditAPI, $window) {
         spyOn($window, 'open');
         spyOn($window, 'addEventListener');
         RedditAPI.login(function(event){console.log('callback called');});
@@ -18,24 +19,48 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         expect($window.addEventListener).toHaveBeenCalled();
       }));
       
-      it('should log user in when login succeeds', inject(function(RedditAPI) {
+      it('should log user in when it receives an access token', inject(function(RedditAPI) {
         var accessToken = 'testtoken';
-        var origin = 'http://localhost:8081';
         var data = {'access_token': accessToken};
-        var event = {'data': data, 'origin': origin};
+        var event = {'data': data, 'origin': VALID_ORIGIN};
 
-        RedditAPI.receiveAccessToken(function(){})(event);
+        RedditAPI.receiveLoginResponse(function(){})(event);
 
         expect(RedditAPI.loggedIn()).toEqual(true);
       }));
       
+      it('should not log user in when it receives empty data', inject(function(RedditAPI) {
+        var event = {'data': {}, 'origin': VALID_ORIGIN};
+
+        RedditAPI.receiveLoginResponse(function(){})(event);
+
+        expect(RedditAPI.loggedIn()).toEqual(false);
+      }));
+      
+      it('should not log user in when it receives an empty access token', inject(function(RedditAPI) {
+        var data = {'access_token': ''};
+        var event = {'data': data, 'origin': VALID_ORIGIN};
+
+        RedditAPI.receiveLoginResponse(function(){})(event);
+
+        expect(RedditAPI.loggedIn()).toEqual(false);
+      }));
+      
       it('should not log user in when origin is invalid', inject(function(RedditAPI) {
         var accessToken = 'testtoken';
-        var origin = 'invalid';
         var data = {'access_token': accessToken};
-        var event = {'data': data, 'origin': origin};
+        var event = {'data': data, 'origin': 'invalid'};
 
-        RedditAPI.receiveAccessToken(function(){})(event);
+        RedditAPI.receiveLoginResponse(function(){})(event);
+
+        expect(RedditAPI.loggedIn()).toEqual(false);
+      }));
+      
+      it('should not log user in when it receives an error', inject(function(RedditAPI) {
+        var data = {'error': 'access_denied'};
+        var event = {'data': data, 'origin': VALID_ORIGIN};
+
+        RedditAPI.receiveLoginResponse(function(){})(event);
 
         expect(RedditAPI.loggedIn()).toEqual(false);
       }));
@@ -48,7 +73,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         var data = {'access_token': accessToken};
         var event = {'data': data, 'origin': origin};
 
-        RedditAPI.receiveAccessToken(function(){})(event);
+        RedditAPI.receiveLoginResponse(function(){})(event);
         expect(RedditAPI.loggedIn()).toEqual(true);
 
         RedditAPI.logout(function(){});
@@ -63,7 +88,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         var event = {'data': data, 'origin': origin};
 
 
-        RedditAPI.receiveAccessToken(function(){})(event);
+        RedditAPI.receiveLoginResponse(function(){})(event);
         expect(RedditAPI.loggedIn()).toEqual(true);
 
         var callback = jasmine.createSpy();

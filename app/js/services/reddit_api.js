@@ -25,11 +25,11 @@ define(function () {
             + '&scope=' + SCOPE
             + '&redirect_uri=' + REDIRECT_URL;
 
-      $window.addEventListener("message", this.receiveAccessToken(callback), false);
+      $window.addEventListener("message", this.receiveLoginResponse(callback), false);
       $window.open(login_url, 'reddit_oauth_signin'); 
     };
 
-    this.receiveAccessToken = function(callback){
+    this.receiveLoginResponse = function(callback){
       return function(event){
         if (event.origin !== REDIRECT_URL){
           console.log('Received message from invalid origin:', event.origin);
@@ -37,7 +37,9 @@ define(function () {
           return;
         }
         console.log('Received message:', event);
-        accessToken = event.data.access_token;
+        if(event.data && event.data.access_token){
+            accessToken = event.data.access_token;
+        }
         console.log('Access token:', accessToken);
         callback();
       }

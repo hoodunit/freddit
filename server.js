@@ -25,6 +25,8 @@ function routeRequests(clientRequest, clientResponse, next) {
     var query = urlParts.query;
     if(query.code){
       returnAccessToken(clientResponse, query);
+    } else if(query.error){
+      returnError(clientResponse, query, next);
     } else {
       returnApp(clientResponse, next);
     }
@@ -67,6 +69,17 @@ function returnAccessToken(clientResponse, query){
                    clientResponse.end();
                  });
                });
+}
+
+function returnError(clientResponse, query, next){
+  fs.readFile('./app/oauth.html', 'utf8', function(err, data) {
+    if(err) return next(err);
+    
+    clientResponse.writeHead(200, { 'Content-Type': 'text/html'});
+    clientResponse.write(data);
+    clientResponse.write(JSON.stringify(query));
+    clientResponse.end();
+  });
 }
 
 function returnOAuthResponse(clientRequest, clientResponse, pathname){

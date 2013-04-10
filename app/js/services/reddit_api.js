@@ -13,6 +13,7 @@ define(function () {
     var REDDIT_OAUTH_URL = 'http://localhost:8081/oauth';
 
     var accessToken = null;
+    this.username = null;
 
     var subRedditPosts = null;
 
@@ -45,15 +46,19 @@ define(function () {
       }
     };
 
-    this.getUserName = function(){
-      var userName = $q.defer();
-      var url = REDDIT_OAUTH_URL + '/api/v1/me';
-      var headers = {'Authorization': 'bearer ' + accessToken};
-      $http.get(url, {headers: headers}).success(function(userData){
-        userName.resolve(userData.name);
-      });
+    this.getUsername = function(){
+      if(!this.username){
+        this.username = $q.defer();
 
-      return userName.promise;
+        var url = REDDIT_OAUTH_URL + '/api/v1/me';
+        var headers = {'Authorization': 'bearer ' + accessToken};
+        var redditApi = this;
+        $http.get(url, {headers: headers}).success(function(userData){
+          redditApi.username.resolve(userData.name);
+        });
+      }
+
+      return this.username.promise;
     };
 
     this.logout = function(callback){

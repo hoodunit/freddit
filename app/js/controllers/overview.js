@@ -7,8 +7,7 @@ define(function () {
     $scope.loggedIn = RedditAPI.loggedIn;
     $scope.login = function(){
       RedditAPI.login(function(){
-        $scope.$apply();
-        $scope.userName = RedditAPI.getUserName();
+        $scope.username = RedditAPI.getUsername();
         RedditAPI.loadUserSubreddits(function(subredditNames){
           $scope.loadSubreddits(subredditNames);
         });

@@ -41,6 +41,37 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
       }));
     });
 
+    describe('logout', function() {
+      it('should log the user out', inject(function(RedditAPI) {
+        var accessToken = 'testtoken';
+        var origin = 'http://localhost:8081';
+        var data = {'access_token': accessToken};
+        var event = {'data': data, 'origin': origin};
+
+        RedditAPI.receiveAccessToken(function(){})(event);
+        expect(RedditAPI.loggedIn()).toEqual(true);
+
+        RedditAPI.logout(function(){});
+        expect(RedditAPI.loggedIn()).toEqual(false);
+      }));
+
+      it('should call a callback function after logging the user out',
+         inject(function(RedditAPI) {
+        var accessToken = 'testtoken';
+        var origin = 'http://localhost:8081';
+        var data = {'access_token': accessToken};
+        var event = {'data': data, 'origin': origin};
+
+
+        RedditAPI.receiveAccessToken(function(){})(event);
+        expect(RedditAPI.loggedIn()).toEqual(true);
+
+        var callback = jasmine.createSpy();
+        RedditAPI.logout(callback);
+        expect(callback).toHaveBeenCalled();
+      }));
+    });
+
   });
 
 });

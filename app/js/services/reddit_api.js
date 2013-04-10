@@ -33,15 +33,11 @@ define(function () {
     this.receiveLoginResponse = function(callback){
       return function(event){
         if (event.origin !== REDIRECT_URL){
-          console.log('Received message from invalid origin:', event.origin);
-          console.log(event);
           return;
         }
-        console.log('Received message:', event);
         if(event.data && event.data.access_token){
             accessToken = event.data.access_token;
         }
-        console.log('Access token:', accessToken);
         callback();
       }
     };
@@ -77,7 +73,6 @@ define(function () {
       $http.jsonp(url).success(function(data){
         var firstPost = data.data.children[0];
         var directLink = extractDirectImageLink(firstPost.data.url);
-        //console.log(firstPost.data.url);
         if (directLink == null) {
           // TODO: do something if we are unable to get the first image
           imageUrl.resolve('');
@@ -99,9 +94,7 @@ define(function () {
 
         for(var i = 0; i < postsData.length; i++){
           var postData = postsData[i];
-          console.log('srcLink: '+postData.data.url);
           var directLink = extractDirectImageLink(postData.data.url);
-          console.log('directLink: '+directLink);
           if(directLink !== null){
             var post = {'id': postData.data.id,
                         'url': directLink,
@@ -185,13 +178,11 @@ define(function () {
       return post.promise;
     };
 
-
     this.getPosts = function(postId){
         var previousId = 0;
         var nextId = 0;
         for(var i = 0 ; i < subRedditPosts.length ; i++){
             if (subRedditPosts[i].id == postId) {
-              //console.log("hi");
               if(i == (subRedditPosts.length - 1)){
                 nextId = subRedditPosts[(subRedditPosts.length - 1)].id;
               } else {

@@ -13,10 +13,9 @@ define(function () {
     var REDDIT_OAUTH_URL = 'http://localhost:8081/oauth';
 
     var accessToken = null;
-    this.username = null;
+    this.username = $q.defer();
 
     var subRedditPosts = null;
-
 
     this.login = function(callback) {
       var login_url = REDDIT_SSL_URL + '/api/v1/authorize'
@@ -31,34 +30,35 @@ define(function () {
     };
 
     this.receiveLoginResponse = function(callback){
+      var redditApi = this;
       return function(event){
         if (event.origin !== REDIRECT_URL){
           return;
         }
         if(event.data && event.data.access_token){
-            accessToken = event.data.access_token;
+          accessToken = event.data.access_token;
+          redditApi.fetchUsername();
         }
         callback();
       }
     };
 
     this.getUsername = function(){
-      if(!this.username){
-        this.username = $q.defer();
-
-        var url = REDDIT_OAUTH_URL + '/api/v1/me';
-        var headers = {'Authorization': 'bearer ' + accessToken};
-        var redditApi = this;
-        $http.get(url, {headers: headers}).success(function(userData){
-          redditApi.username.resolve(userData.name);
-        });
-      }
-
       return this.username.promise;
+    };
+
+    this.fetchUsername = function(){
+      var url = REDDIT_OAUTH_URL + '/api/v1/me';
+      var headers = {'Authorization': 'bearer ' + accessToken};
+      var redditApi = this;
+      $http.get(url, {headers: headers}).success(function(userData){
+        redditApi.username.resolve(userData.name);
+      });
     };
 
     this.logout = function(callback){
       accessToken = null;
+      this.username = $q.defer();
       callback();
     };
 

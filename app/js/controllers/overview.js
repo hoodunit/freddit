@@ -4,10 +4,10 @@ define(function () {
   function OverviewCtrl($scope, RedditAPI) {
     var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
 
+    $scope.username = RedditAPI.getUsername();
     $scope.loggedIn = RedditAPI.loggedIn;
     $scope.login = function(){
       RedditAPI.login(function(){
-        $scope.username = RedditAPI.getUsername();
         RedditAPI.loadUserSubreddits(function(subredditNames){
           $scope.loadSubreddits(subredditNames);
         });

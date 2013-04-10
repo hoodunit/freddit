@@ -11,6 +11,10 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
     }));
 
     describe('login', function() {
+      beforeEach(inject(function(RedditAPI){
+        spyOn(RedditAPI, 'fetchUsername');
+      }));
+
       it('should open a new window and listen for response messages', inject(function(RedditAPI, $window) {
         spyOn($window, 'open');
         spyOn($window, 'addEventListener');
@@ -27,6 +31,16 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         RedditAPI.receiveLoginResponse(function(){})(event);
 
         expect(RedditAPI.loggedIn()).toEqual(true);
+      }));
+      
+      it('should fetch username after logging in', inject(function(RedditAPI) {
+        var accessToken = 'testtoken';
+        var data = {'access_token': accessToken};
+        var event = {'data': data, 'origin': VALID_ORIGIN};
+
+        RedditAPI.receiveLoginResponse(function(){})(event);
+
+        expect(RedditAPI.fetchUsername).toHaveBeenCalled();
       }));
       
       it('should not log user in when it receives empty data', inject(function(RedditAPI) {
@@ -67,7 +81,11 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
     });
 
     describe('logout', function() {
-      it('should log the user out', inject(function(RedditAPI) {
+      beforeEach(inject(function(RedditAPI){
+        spyOn(RedditAPI, 'fetchUsername');
+      }));
+
+      it('should set the user to logged out', inject(function(RedditAPI) {
         var accessToken = 'testtoken';
         var origin = VALID_ORIGIN;
         var data = {'access_token': accessToken};
@@ -78,6 +96,24 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
 
         RedditAPI.logout(function(){});
         expect(RedditAPI.loggedIn()).toEqual(false);
+      }));
+
+      it('should clear the username', inject(function(RedditAPI, $q) {
+        var accessToken = 'testtoken';
+        var origin = VALID_ORIGIN;
+        var data = {'access_token': accessToken};
+        var event = {'data': data, 'origin': origin};
+
+        var origUsername = $q.defer();
+        RedditAPI.username = origUsername;
+
+        RedditAPI.receiveLoginResponse(function(){})(event);
+        expect(RedditAPI.loggedIn()).toEqual(true);
+        expect(RedditAPI.username).toEqual(origUsername);
+
+
+        RedditAPI.logout(function(){});
+        expect(RedditAPI.username).toNotEqual(origUsername);
       }));
 
       it('should call a callback function after logging the user out',
@@ -97,7 +133,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
       }));
     });
 
-    describe('getUsername', function() {
+    describe('fetchUsername', function() {
       var $httpBackend;
       var testUsername;
       var testUserData;
@@ -106,30 +142,27 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         $httpBackend = $injector.get('$httpBackend');
         testUsername = 'testuser';
         testUserData = {'name': testUsername};
-        $httpBackend.when('GET', 'http://localhost:8081/oauth/api/v1/me').respond(testUserData);
       }));
 
-      it('should return the resolved username promise if it already exists', inject(function(RedditAPI, $rootScope, $q) {
+      afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+      });
+
+      it('should call server and resolve the username promise after receiving username', inject(function(RedditAPI, $q) {
+        $httpBackend.expectGET('http://localhost:8081/oauth/api/v1/me')
+          .respond(testUserData);
+
         var deferredTestUsername = $q.defer();
         var testUsernamePromise = deferredTestUsername.promise;
-        
+        var username;
+        testUsernamePromise.then(function(value){username = value;});
+
         RedditAPI.username = deferredTestUsername;
-        var receivedUsernamePromise = RedditAPI.getUsername();
-        expect(receivedUsernamePromise).toEqual(testUsernamePromise);
-      }));
-
-      it('should return a promise and fetch the username if it does not exist',
-         inject(function(RedditAPI, $rootScope) {
-        expect(RedditAPI.username).toEqual(null);
-
-        $httpBackend.expectGET('http://localhost:8081/oauth/api/v1/me');
-        var usernamePromise = RedditAPI.getUsername();
-        var resolvedUsername;
-        usernamePromise.then(function(value){resolvedUsername = value;});
-        expect(resolvedUsername).toBeUndefined();
-
+        
+        RedditAPI.fetchUsername();
         $httpBackend.flush();
-        expect(resolvedUsername).toEqual(testUsername);
+        expect(username).toEqual(testUsername);
       }));
     });
 

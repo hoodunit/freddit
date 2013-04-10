@@ -40,6 +40,10 @@ define(['angular', 'mocks'], function () {
       expect(scope.subreddits).toEqual(defaultSubreddits);
     });
 
+    it('should set username from RedditAPI', inject(function(RedditAPI){
+      expect(scope.username).toEqual(RedditAPI.getUsername());
+    }));
+
     describe('login', function () {
       it('should set loggedIn to RedditAPI.loggedIn', inject(function (RedditAPI) {
         expect(scope.loggedIn).toEqual(RedditAPI.loggedIn);
@@ -50,25 +54,10 @@ define(['angular', 'mocks'], function () {
         expect(RedditAPI.login).toHaveBeenCalled();
       }));
 
-      it('should initially have a null user name', function () {
-        expect(scope.username).toEqual(null);
-      });
-
-      it('should set the user name after logging in', function () {
-        scope.login();
-        expect(scope.username).toEqual(username);
-      });
-
       it('should load user subreddits after logging in', function () {
         scope.login();
         expect(scope.subreddits).toEqual(userSubreddits);
       });
-
-      it('should not change the user name if login fails', inject(function (RedditAPI) {
-        RedditAPI.login = function(callback){};
-        scope.login();
-        expect(scope.username).toEqual(null);
-      }));
 
       it('should not load user subreddits if login fails', inject(function (RedditAPI) {
         RedditAPI.login = function(callback){};

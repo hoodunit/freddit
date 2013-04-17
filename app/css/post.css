@@ -8,6 +8,12 @@
   font-size: 1.5rem;
 }
 
+.faux_shadow
+{
+  height: 4px;
+  background: url("../shared/style/headers/images/ui/shadow.png") repeat-x;
+}
+
 .view.detail img{
 
   height: auto;
@@ -25,8 +31,8 @@
 }
 
 .info_container {
-  background: url("../img/ff_darknoise.png") repeat scroll 0 0 #222222;
-  color: #000000;
+  background: url("../img/ff_darknoise.png") repeat scroll 0 0 #7F7F7F;
+  color: #FFF;
 }
 
 .next_button{
@@ -45,17 +51,6 @@
   background-size: contain;
 }
 
-section[role="region"] > header:first-child:after {
-  background: url("headers/images/ui/shadow.png") repeat-x scroll 0 0 / auto 100% transparent;
-  content: "";
-  display: block;
-  height: 0.3rem;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 100%;
-}
-
 .vertically_centered {
   position: absolute;
   top: 50%;
@@ -63,8 +58,22 @@ section[role="region"] > header:first-child:after {
 
 .fading_button a
 {
-    position: absolute;
-    display: block;
-    width: 100%;
-    height: 100%;
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.title
+{
+  font: 2.5rem/3rem "MozTT",Sans-serif;
+  text-shadow: 2px 2px 3px black;
+}
+
+.author
+{
+  font: 2.5rem/3rem italic "MozTT",Sans-serif;
+  text-shadow: 2px 2px 3px black;
+  text-align: right;
+  padding: 2rem;
 }

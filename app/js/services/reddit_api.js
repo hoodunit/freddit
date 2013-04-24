@@ -111,6 +111,41 @@ define(function () {
       return posts.promise;
     };
 
+     this.getSubredditPostsSortedBy = function(subredditName, sortParam){
+      // fetch posts sorted by sortParam
+      var posts = $q.defer();
+
+      if(!(sortParam === "new" ||  sortParam === "rising" || sortParam === "hot" || sortParam === "controversial")){
+        console.log("Some weird sorting parameter given");
+        return null;
+      }
+
+      var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=' + sortParam;
+      var extractDirectImageLink = this.extractDirectImageLink;
+      subRedditPosts = [];
+      $http.jsonp(url).success(function(data){
+        var postsData = data.data.children;
+        var parsedPosts = [];
+
+        for(var i = 0; i < postsData.length; i++){
+          var postData = postsData[i];
+          var directLink = extractDirectImageLink(postData.data.url);
+          if(directLink !== null){
+            var post = {'id': postData.data.id,
+                        'url': directLink,
+                        'title': postData.data.title};
+            parsedPosts.push(post);
+
+            //Global
+            subRedditPosts.push(post);
+          }
+        }
+        posts.resolve(parsedPosts);
+      });
+
+      return posts.promise;
+    };
+
     this.extractDirectImageLink = function(url) {
       var res;
 

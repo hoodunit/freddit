@@ -15,7 +15,13 @@ define(function () {
     var accessToken = null;
     this.username = $q.defer();
 
+    var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
+    this.subredditNames = DEFAULT_SUBREDDITS;
     var subRedditPosts = null;
+
+    this.getSubredditNames = function(){
+      return this.subredditNames;
+    }
 
     this.login = function(callback) {
       var login_url = REDDIT_SSL_URL + '/api/v1/authorize'
@@ -38,8 +44,8 @@ define(function () {
         if(event.data && event.data.access_token){
           accessToken = event.data.access_token;
           redditApi.fetchUsername();
+          redditApi.loadUserSubredditNames(callback);
         }
-        callback();
       }
     };
 
@@ -161,9 +167,11 @@ define(function () {
       return null;
     };
 
-    this.loadUserSubreddits = function(callback){
+    this.loadUserSubredditNames = function(callback){
       var url = REDDIT_OAUTH_URL + '/subreddits/mine/subscriber.json';
       var headers = {'Authorization': 'bearer ' + accessToken};
+
+      var redditApi = this;
 
       $http.get(url, {headers: headers}).success(function(subscribedData){
         var subredditsData = subscribedData.data.children;
@@ -172,7 +180,9 @@ define(function () {
           var subredditName = subredditsData[i].data.display_name;
           subredditNames.push(subredditName);
         }
-        callback(subredditNames);
+        
+        redditApi.subredditNames = subredditNames;
+        callback();
       });
     };
 

@@ -68,17 +68,25 @@ define(function () {
 
     this.getSubredditFirstImageUrl = function(subredditName){
       var imageUrl = $q.defer();
-      var url = REDDIT_URL + '/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=1';
+      var speculativeSize = 10;
+      var url = REDDIT_URL + '/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + speculativeSize;
       var extractDirectImageLink = this.extractDirectImageLink;
       $http.jsonp(url).success(function(data){
-        var firstPost = data.data.children[0];
-        var directLink = extractDirectImageLink(firstPost.data.url);
-        if (directLink == null) {
-          // TODO: do something if we are unable to get the first image
-          imageUrl.resolve('');
-        } else {
-          imageUrl.resolve(directLink);
+        //console.log("Subreddit: "+subredditName+" Speculative size:"+data.data.children.length);
+        var i = 0;
+        for (i = 0;i < data.data.children.length;i ++) {
+          var firstPost = data.data.children[i];
+          var directLink = extractDirectImageLink(firstPost.data.url);
+          if (directLink != null) {
+            imageUrl.resolve(directLink);
+            //console.log("Selected: "+directLink);
+            break;
+          }
         }
+        if (i == data.data.children.length) {
+          //console.log("Subreddit: "+subredditName+" USING DEFAULT");
+          imageUrl.resolve("http://www.redditstatic.com/icon.png");
+        } 
       });
       return imageUrl.promise;
     };

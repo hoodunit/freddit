@@ -1,0 +1,13 @@
+{
+  "name": "Freddit",
+  "description": "An image-oriented reddit client for Firefox OS",
+  "launch_path": "/",
+  "icons": {
+    "128": "/img/icon-128.png"
+  },
+  "developer": {
+    "name": "Team Freddit",
+    "url": "http://localhost:8080"
+  },
+  "default_locale": "en"
+}

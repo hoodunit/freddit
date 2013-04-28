@@ -199,12 +199,12 @@ define(function () {
     };
 
     this.getPosts = function(postId){
-        var previousId = 0;
+        var previousId = false;
         var nextId = 0;
         for(var i = 0 ; i < subRedditPosts.length ; i++){
             if (subRedditPosts[i].id == postId) {
               if(i == (subRedditPosts.length - 1)){
-                nextId = subRedditPosts[(subRedditPosts.length - 1)].id;
+                nextId = false;
               } else {
                 nextId = subRedditPosts[i+1].id;
               }

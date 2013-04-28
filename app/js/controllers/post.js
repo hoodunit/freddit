@@ -15,8 +15,19 @@ define(function () {
     
 
 	  var ids = RedditAPI.getPosts(postId);
-    $scope.previousPost = ids[1];
-    $scope.nextPost = ids[0];
+    if (ids[0] == false) {
+      $scope.existNextPost = false;
+    } else {
+      $scope.nextPost = ids[0];
+      $scope.existNextPost = true;
+    }
+    if (ids[1] == false) {
+      $scope.existPreviousPost = false;
+    } else {
+      $scope.previousPost = ids[1];
+      $scope.existPreviousPost = true;
+    }
+    
     
   }
 

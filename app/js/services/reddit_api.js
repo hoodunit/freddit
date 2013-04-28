@@ -17,12 +17,15 @@ define(function () {
 
     var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
 
-    this.subredditNames = DEFAULT_SUBREDDITS;
-    this.subreddits = null;
     var subRedditPosts = null;
 
     var FIRST_IMAGE_SPECULATIVE_SIZE = 10;
     var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
+
+    this.resetSubreddits = function(){
+      this.subredditNames = DEFAULT_SUBREDDITS;
+      this.subreddits = null;
+    }
 
     this.getSubreddits = function(){
       if(this.subreddits === null){
@@ -85,6 +88,7 @@ define(function () {
     this.logout = function(callback){
       accessToken = null;
       this.username = $q.defer();
+      this.resetSubreddits();
       callback();
     };
 
@@ -255,6 +259,7 @@ define(function () {
         }
         
         redditApi.subredditNames = subredditNames;
+        redditApi.subreddits = null;
         callback();
       });
     };
@@ -293,6 +298,7 @@ define(function () {
         return ids;
     };
 
+    this.resetSubreddits();
   }
 
   RedditAPI.$inject = ['$http', '$q', '$window'];

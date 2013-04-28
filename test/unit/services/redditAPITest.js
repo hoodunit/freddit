@@ -4,13 +4,13 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
 
   describe('RedditAPI', function() {
     var VALID_ORIGIN = 'http://localhost:8081';
+    var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
 
     it('should contain a RedditAPI service', inject(function(RedditAPI) {
       expect(RedditAPI).not.toBe(null);
     }));
 
     describe('getSubreddits', function() {
-      var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
       var $httpBackend;
 
       beforeEach(inject(function(RedditAPI, $injector){
@@ -165,6 +165,27 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
 
         RedditAPI.logout(function(){});
         expect(RedditAPI.username).toNotEqual(origUsername);
+      }));
+
+      it('should reset loaded subreddits to defaults', inject(function(RedditAPI, $q) {
+        var accessToken = 'testtoken';
+        var origin = VALID_ORIGIN;
+        var data = {'access_token': accessToken};
+        var event = {'data': data, 'origin': origin};
+
+        var origUsername = $q.defer();
+        RedditAPI.username = origUsername;
+
+        RedditAPI.receiveLoginResponse(function(){})(event);
+        expect(RedditAPI.loggedIn()).toEqual(true);
+        expect(RedditAPI.username).toEqual(origUsername);
+
+        RedditAPI.subredditNames = ['testname1', 'testname2'];
+        RedditAPI.subreddits = RedditAPI.subredditNames;
+
+        RedditAPI.logout(function(){});
+        expect(RedditAPI.subredditNames).toEqual(DEFAULT_SUBREDDITS);
+        expect(RedditAPI.subreddits).toEqual(null);
       }));
 
       it('should call a callback function after logging the user out',

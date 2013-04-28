@@ -16,15 +16,32 @@ define(function () {
     this.username = $q.defer();
 
     var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
+
     this.subredditNames = DEFAULT_SUBREDDITS;
+    this.subreddits = null;
     var subRedditPosts = null;
 
     var FIRST_IMAGE_SPECULATIVE_SIZE = 10;
     var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
 
-    this.getSubredditNames = function(){
-      return this.subredditNames;
-    }
+    this.getSubreddits = function(){
+      if(this.subreddits === null){
+        return this.loadSubreddits();
+      } else {
+        return this.subreddits;
+      }
+    };
+
+    this.loadSubreddits = function(){
+      var subreddits = [];
+      for(var i = 0, subredditName; subredditName = this.subredditNames[i]; i++){
+        var imageUrl = this.getSubredditFirstImageUrl(subredditName);
+        var subreddit = {'name': subredditName, 'first_image_url': imageUrl};
+        subreddits.push(subreddit);
+      };
+      this.subreddits = subreddits;
+      return subreddits;
+    };
 
     this.login = function(callback) {
       var login_url = REDDIT_SSL_URL + '/api/v1/authorize'
@@ -47,9 +64,9 @@ define(function () {
         if(event.data && event.data.access_token){
           accessToken = event.data.access_token;
           redditApi.fetchUsername();
-          redditApi.loadUserSubredditNames(callback);
+          redditApi.getUserSubredditNames(callback);
         }
-      }
+      };
     };
 
     this.getUsername = function(){
@@ -211,11 +228,12 @@ define(function () {
       return null;
     };
 
-    this.loadUserSubredditNames = function(callback){
+    this.getUserSubredditNames = function(callback){
       var url = REDDIT_OAUTH_URL + '/subreddits/mine/subscriber.json';
       var headers = {'Authorization': 'bearer ' + accessToken};
 
       var redditApi = this;
+      var subredditNames = [];
 
       $http.get(url, {headers: headers}).success(function(subscribedData){
         var subredditsData = subscribedData.data.children;

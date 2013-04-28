@@ -1,11 +1,21 @@
 <link rel="stylesheet" type="text/css" href="shared/style/headers.css">
-<link rel="stylesheet" type="text/css" href="css/post.css">
+<link rel="stylesheet" type="text/css" href="shared/style/buttons.css">
+<link rel="stylesheet" type="text/css" href="shared/style/switches.css">
+<link rel="stylesheet" type="text/css" href="css/settings.css">
 <section role="region">
   <header>
     <a ng-tap="$navigate.go('/', 'modal', true)"><span class="icon icon-back">back</span></a>
+    <h1>Settings</h1>
   </header>
 </section>
-<section role="settings_page">
-	<h1>TESTSTETSSETSETSTSSETSETESTESTETESTEST</h1>
-	<p>test test test test test test test test test test test test test </p>
+<section class="view">
+  <div class="settings_item">
+    <div class="settings_name">
+      <h1>Show NSFW</h1>
+    </div>
+    <label>
+      <input data-type="switch" checked="" type="checkbox" id="nsfw">
+      <span></span>
+    </label>
+  </div>
 </section>

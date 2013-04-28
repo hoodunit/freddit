@@ -1,0 +1,12 @@
+.settings_item
+{}
+
+.settings_name
+{
+	float: left;
+}
+
+.settings_item label
+{
+	float: right;
+}

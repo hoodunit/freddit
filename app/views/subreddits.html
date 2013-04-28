@@ -9,7 +9,18 @@
     <h1>{{subredditName}}</h1>
   </header>
 </section>
+<!-- Page button -->
 <section class="view">
+  <div ng-show="false;" class="button_tile">
+    <a href="" ng-tap="$navigate.go('/', 'slide', false)"></a>
+    <div class="proportional_helper"></div>
+    <div class="button_tile_title">
+      <a href="" ng-tap="$navigate.go('/', 'slide', false)"></a>
+      <h1>Previous Page</h1>
+    </div>
+  </div>
+
+  <!-- image tiles -->
   <div class="image_tile" ng-repeat="post in posts" style="background-image: url({{post.url}})">
     <a href="" ng-tap="$navigate.go('/post/{{post.id}}', 'slide', false)"></a>
     <div class="proportional_helper"></div>
@@ -17,6 +28,16 @@
     <div class="image_tile_title" >
       <a href="" ng-tap="$navigate.go('/post/{{post.id}}', 'slide', false)"></a>
       <h2>{{post.title}}<h2>
+    </div>
+  </div>
+
+  <!-- Page button -->
+  <div ng-show="false;" class="button_tile">
+    <a href="" ng-tap="$navigate.go('/', 'slide', false)"></a>
+    <div class="proportional_helper"></div>
+    <div class="button_tile_title">
+      <a href="" ng-tap="$navigate.go('/', 'slide', false)"></a>
+      <h1>Next Page</h1>
     </div>
   </div>
 </section>

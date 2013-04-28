@@ -35,3 +35,37 @@
     color: #FFFFFF;
     text-decoration: none;
 }
+
+.button_tile
+{
+    position: relative;
+    float: left;
+    width: 50%;
+    background: url("../img/ff_darknoise.png") repeat scroll 0 0 #C66A00;
+}
+
+.button_tile a
+{
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.button_tile_title
+{
+    width: 100%;
+    position: absolute;
+    top: 0;
+    margin: 0;
+    color: white;
+    overflow: hidden; 
+}
+
+.button_tile_title h1
+{
+    margin: 0;
+    font: 2.0rem/3.0rem "MozTT",Sans-serif;
+    text-shadow: 2px 2px 3px black;
+    padding: 5px;
+}

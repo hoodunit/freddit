@@ -200,18 +200,22 @@ define(function () {
       var url = REDDIT_URL + '/by_id/t3_' + postId + '.json?jsonp=JSON_CALLBACK';
       $http.jsonp(url).success(function(object){
           var postData = object.data.children[0].data;
+          //console.log(postData);
           post.resolve(postData);
+        }).error(function(object){
+          console.log("meow");
+          post.reject(false);
         });
       return post.promise;
     };
 
     this.getPosts = function(postId){
-        var previousId = 0;
+        var previousId = false;
         var nextId = 0;
         for(var i = 0 ; i < subRedditPosts.length ; i++){
             if (subRedditPosts[i].id == postId) {
               if(i == (subRedditPosts.length - 1)){
-                nextId = subRedditPosts[(subRedditPosts.length - 1)].id;
+                nextId = false;
               } else {
                 nextId = subRedditPosts[i+1].id;
               }

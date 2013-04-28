@@ -1,5 +1,4 @@
-define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, services) {
-  beforeEach(function() {
+define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, services) {beforeEach(function() {
     module('services');
   });
 
@@ -10,19 +9,58 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
       expect(RedditAPI).not.toBe(null);
     }));
 
-    describe('subreddits', function() {
+    describe('getSubreddits', function() {
       var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
-      var userSubreddits = ['pics', 'mapporn'];
+      var $httpBackend;
+
+      beforeEach(inject(function(RedditAPI, $injector){
+        $httpBackend = $injector.get('$httpBackend');
+
+        for(var i = 0; i < DEFAULT_SUBREDDITS.length; i++){
+          var url = 'http://reddit.com/r/'
+            + DEFAULT_SUBREDDITS[i]
+            + '/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=10';
+          $httpBackend.when('JSONP', url).respond(null);
+        }
+
+        spyOn(RedditAPI, 'loadSubreddits').andCallThrough();
+      }));
+
+      afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+      });
       
-      it('should initially set subreddits to default subreddits', inject(function(RedditAPI) {
-        expect(RedditAPI.getSubredditNames()).toEqual(DEFAULT_SUBREDDITS);
+      it('should load and return default subreddits if not logged in',
+         inject(function(RedditAPI) {
+        var subreddits = RedditAPI.getSubreddits();
+        for(var i = 0; i < subreddits.length; i++){
+          expect(subreddits[i]['name']).toEqual(DEFAULT_SUBREDDITS[i]);
+        }
+        expect(RedditAPI.loadSubreddits).toHaveBeenCalled();
+      }));
+      
+      it('should return default subreddits without loading if already loaded',
+         inject(function(RedditAPI) {
+        spyOn(RedditAPI, 'subreddits').andReturn(DEFAULT_SUBREDDITS);
+        var subreddits = RedditAPI.getSubreddits();
+        expect(RedditAPI.loadSubreddits).not.toHaveBeenCalled();
+      }));
+
+      it('should return user subreddits if logged in', inject(function(RedditAPI) {
+        var userSubreddits = ['mapporn', 'corgi'];
+        spyOn(RedditAPI, 'subredditNames').andReturn(userSubreddits);
+
+        var subreddits = RedditAPI.getSubreddits();
+        for(var i = 0; i < subreddits.length; i++){
+          expect(subreddits[i]['name']).toEqual(userSubreddits[i]);
+        }
       }));
     });
 
     describe('login', function() {
       beforeEach(inject(function(RedditAPI){
         spyOn(RedditAPI, 'fetchUsername');
-        spyOn(RedditAPI, 'loadUserSubredditNames');
+        spyOn(RedditAPI, 'getUserSubredditNames');
       }));
 
       it('should open a new window and listen for response messages', inject(function(RedditAPI, $window) {
@@ -33,17 +71,19 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         expect($window.addEventListener).toHaveBeenCalled();
       }));
       
-      it('should log user in when it receives an access token', inject(function(RedditAPI) {
+      it('should log user in when it receives a valid access token',
+         inject(function(RedditAPI) {
         var accessToken = 'testtoken';
         var data = {'access_token': accessToken};
         var event = {'data': data, 'origin': VALID_ORIGIN};
+        var callback = jasmine.createSpy();
 
-        RedditAPI.receiveLoginResponse(function(){})(event);
+        RedditAPI.receiveLoginResponse(callback)(event);
 
         expect(RedditAPI.loggedIn()).toEqual(true);
       }));
       
-      it('should fetch username after logging in', inject(function(RedditAPI) {
+      it('should fetch username and subreddits after logging in', inject(function(RedditAPI) {
         var accessToken = 'testtoken';
         var data = {'access_token': accessToken};
         var event = {'data': data, 'origin': VALID_ORIGIN};
@@ -88,23 +128,12 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
 
         expect(RedditAPI.loggedIn()).toEqual(false);
       }));
-      
-      it('should load user subreddit names after logging in',
-         inject(function(RedditAPI) {
-
-        var accessToken = 'testtoken';
-        var data = {'access_token': accessToken};
-        var event = {'data': data, 'origin': VALID_ORIGIN};
-
-        RedditAPI.receiveLoginResponse(function(){})(event);
-        expect(RedditAPI.loadUserSubredditNames).toHaveBeenCalled();
-      }));
     });
 
     describe('logout', function() {
       beforeEach(inject(function(RedditAPI){
         spyOn(RedditAPI, 'fetchUsername');
-        spyOn(RedditAPI, 'loadUserSubredditNames');
+        spyOn(RedditAPI, 'getUserSubredditNames');
       }));
 
       it('should set the user to logged out', inject(function(RedditAPI) {
@@ -188,7 +217,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
       }));
     });
 
-    describe('loadUserSubredditNames', function() {
+    describe('getUserSubredditNames', function() {
       var $httpBackend;
 
       beforeEach(inject(function($injector){
@@ -209,7 +238,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         $httpBackend.expectGET('http://localhost:8081/oauth/subreddits/mine/subscriber.json')
           .respond(userSubredditData);
 
-        RedditAPI.loadUserSubredditNames(function(){});
+        RedditAPI.getUserSubredditNames(function(){});
         $httpBackend.flush();
         expect(RedditAPI.subredditNames).toEqual(userSubreddits);
       }));

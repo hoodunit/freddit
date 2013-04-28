@@ -26,9 +26,8 @@ define(['angular', 'mocks'], function () {
         RedditAPI.login = function(callback){callback(true);};
         spyOn(RedditAPI, 'login').andCallThrough();
         RedditAPI.loadUserSubreddits = function(callback){callback(userSubredditNames);};
-        spyOn(RedditAPI, 'loadUserSubreddits').andCallThrough();
         spyOn(RedditAPI, 'getUsername').andReturn(username);
-        spyOn(RedditAPI, 'getSubredditNames').andReturn(defaultSubredditNames);
+        spyOn(RedditAPI, 'getSubreddits').andReturn(defaultSubreddits);
 
 	$controller('OverviewCtrl', {
 	  $scope : scope
@@ -36,9 +35,8 @@ define(['angular', 'mocks'], function () {
       });			
     });
 
-    it('should set subreddit from RedditAPI', inject(function(RedditAPI) {
-      expect(scope.subredditNames).toEqual(RedditAPI.getSubredditNames());
-      expect(scope.subreddits).toEqual(defaultSubreddits);
+    it('should load subreddits from RedditAPI', inject(function(RedditAPI) {
+      expect(scope.subreddits).toEqual(RedditAPI.getSubreddits());
     }));
 
     it('should set username from RedditAPI', inject(function(RedditAPI){
@@ -57,15 +55,16 @@ define(['angular', 'mocks'], function () {
 
       it('should load user subreddits after logging in', inject(function (RedditAPI) {
         expect(scope.subreddits).toEqual(defaultSubreddits);
-        RedditAPI.getSubredditNames.andReturn(userSubredditNames);
+        RedditAPI.getSubreddits.andReturn(userSubreddits);
         scope.login();
         expect(scope.subreddits).toEqual(userSubreddits);
       }));
 
       it('should not load user subreddits if login fails', inject(function (RedditAPI) {
+        expect(scope.subreddits).toEqual(defaultSubreddits);
         RedditAPI.login = function(callback){};
         scope.login();
-        expect(RedditAPI.loadUserSubreddits).not.toHaveBeenCalled();
+        expect(scope.subreddits).toEqual(defaultSubreddits);
       }));
     });
   });

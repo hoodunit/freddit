@@ -161,7 +161,7 @@ define(function () {
         return null;
       }
       console.log(sortParam);
-      var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=' + sortParam;
+      var url = REDDIT_URL + '/r/' + subredditName + '/' + sortParam + '.json?jsonp=JSON_CALLBACK&obey_over18=true';
       return this.realGetSubredditPosts(url);
     };
 

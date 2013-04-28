@@ -1,12 +1,39 @@
 .settings_item
-{}
-
-.settings_name
 {
-	float: left;
+  padding: 0;
+  margin: 0;
+	width: 100%;
+	position: relative;
+	min-height: 38px;
+}
+
+.light_background
+{
+  background: url("../img/ff_darknoise.png") repeat scroll 0 0 #555;
+}
+
+.settings_item h1
+{
+  margin: 0;
+  padding: 10px;
+	font: 2.5rem/3rem "MozTT",Sans-serif;
+}
+
+.settings_item h2
+{
+  padding: 10px;
+  margin: 0;
 }
 
 .settings_item label
 {
 	float: right;
+}
+
+.danger
+{
+	width: 100px;
+	position: absolute;
+	right: 0;
+	top: 0;
 }

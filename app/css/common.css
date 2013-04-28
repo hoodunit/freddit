@@ -3,3 +3,9 @@
     margin-top: 100%;
     height: 100%;
 }
+
+.faux_shadow
+{
+  height: 4px;
+  background: url("../shared/style/headers/images/ui/shadow.png") repeat-x;
+}

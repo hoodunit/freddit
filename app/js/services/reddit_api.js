@@ -93,6 +93,9 @@ define(function () {
         if (i == data.data.children.length) {
           imageUrl.resolve(DEFAULT_IMAGE_URL);
         } 
+      }). 
+      error(function(data, status) {
+        imageUrl.resolve(DEFAULT_IMAGE_URL);
       });
       return imageUrl.promise;
     };
@@ -120,6 +123,14 @@ define(function () {
           }
         }
         posts.resolve(parsedPosts);
+      }).
+      error(function(data, status) {
+       var errorMsg = { 'id': 0, 'url': '',
+                        'title': 'Error getting posts' };
+       var errorPost = [];
+       errorPost.push(errorMsg);
+       subRedditPosts.push(errorMsg);
+       posts.resolve(errorPost);
       });
 
       return posts.promise;
@@ -224,18 +235,22 @@ define(function () {
       var url = REDDIT_URL + '/by_id/t3_' + postId + '.json?jsonp=JSON_CALLBACK';
       $http.jsonp(url).success(function(object){
           var postData = object.data.children[0].data;
+          //console.log(postData);
           post.resolve(postData);
+        }).error(function(object){
+          console.log("meow");
+          post.reject(false);
         });
       return post.promise;
     };
 
     this.getPosts = function(postId){
-        var previousId = 0;
+        var previousId = false;
         var nextId = 0;
         for(var i = 0 ; i < subRedditPosts.length ; i++){
             if (subRedditPosts[i].id == postId) {
               if(i == (subRedditPosts.length - 1)){
-                nextId = subRedditPosts[(subRedditPosts.length - 1)].id;
+                nextId = false;
               } else {
                 nextId = subRedditPosts[i+1].id;
               }

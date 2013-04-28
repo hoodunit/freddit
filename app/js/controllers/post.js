@@ -8,13 +8,11 @@ define(function () {
       $scope.post = true;
       $scope.infoPost = info;
     }, function(info){
-      console.log("Breaking promises" +  info);
+      //console.log("Breaking promises" +  info);
       $scope.post = false;
     });
-    $scope.infoPost = RedditAPI.getPost(postId);
-    
 
-	  var ids = RedditAPI.getPosts(postId);
+    var ids = RedditAPI.getPosts(postId);
     if (ids[0] == false) {
       $scope.existNextPost = false;
     } else {

@@ -162,10 +162,13 @@ define(function () {
         return null;
       }
       console.log(sortParam);
-      var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=' + sortParam;
+      var url = REDDIT_URL + '/r/' + subredditName + '/' + sortParam + '.json?jsonp=JSON_CALLBACK&obey_over18=true';
+      
       var extractDirectImageLink = this.extractDirectImageLink;
+
       subRedditPosts = [];
       $http.jsonp(url).success(function(data){
+        console.log("url worked");
         var postsData = data.data.children;
         var parsedPosts = [];
 
@@ -183,6 +186,14 @@ define(function () {
           }
         }
         posts.resolve(parsedPosts);
+      }).error(function(data, status) {
+       console.log(status); 
+       var errorMsg = { 'id': 0, 'url': '',
+                        'title': 'Error getting posts' };
+       var errorPost = [];
+       errorPost.push(errorMsg);
+       subRedditPosts.push(errorMsg);
+       posts.resolve(errorPost);
       });
 
       return posts.promise;

@@ -9,9 +9,6 @@ define(function () {
     if($scope.orderBy){
     	
     	$scope.posts = RedditAPI.getSubredditPostsSortedBy($scope.subredditName,$scope.orderBy);
-    	if($scope.posts === null){
-    		$scope.posts = RedditAPI.getSubredditPosts($scope.subredditName);
-    	} 
     } else {
     	$scope.posts = RedditAPI.getSubredditPosts($scope.subredditName);
     }

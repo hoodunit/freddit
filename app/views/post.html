@@ -2,11 +2,15 @@
 <link rel="stylesheet" type="text/css" href="css/post.css">
 <section role="region">
   <header>
+
     <a ng-tap="$navigate.go('/r/{{infoPost.subreddit}}', 'slide', true)"><span class="icon icon-back">back</span></a>
     <h1>{{infoPost.subreddit}}</h1>
+
   </header>
 </section>
-<section class="view detail">
+<p>{{post}}</p>
+<p ng-show="{!{post}}">No post with that ID</p>
+<section class="view detail" ng-show="{{post}}">
   <div class="image_container" style="background-image: url({{infoPost.url}})">
     <div class="fading_button">
       <a href="" ng-tap="$navigate.go('/post/{{nextPost}}', 'modal', true)"></a>
@@ -33,5 +37,8 @@
     <div class="comments">{{infoPost.num_comments}}</div>
     <div class="score">{{infoPost.score}}</div>
   -->
-  </div>
+
+  
+
+</div>
 </section>

@@ -129,11 +129,11 @@ define(function () {
       // fetch posts sorted by sortParam
       var posts = $q.defer();
 
-      if(!(sortParam === "new" ||  sortParam === "rising" || sortParam === "hot" || sortParam === "controversial")){
+      if(!(sortParam === "new" ||  sortParam === "rising" || sortParam === "top" ||sortParam === "hot" || sortParam === "controversial")){
         console.log("Some weird sorting parameter given");
         return null;
       }
-
+      console.log(sortParam);
       var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=' + sortParam;
       var extractDirectImageLink = this.extractDirectImageLink;
       subRedditPosts = [];

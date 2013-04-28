@@ -6,10 +6,17 @@
 <section role="region">
   <header>
   <a ng-tap="$navigate.go('/', 'slide', true)"><span class="icon icon-back">back</span></a>
+  <menu type="toolbar">
+  <a href="" ng-tap="$navigate.go('/r/{{subredditName}}/new','slide', false)">new </a>
+  <a href="" ng-tap="$navigate.go('/r/{{subredditName}}/hot','slide', false)">hot </a>
+  <a href="" ng-tap="$navigate.go('/r/{{subredditName}}/top','slide', false)">top</a>
+  <a href="" ng-tap="$navigate.go('/r/{{subredditName}}/controversial','slide', false)">controversial</a>
+</menu>
     <h1>{{subredditName}}</h1>
   </header>
 </section>
 <section class="view">
+
   <div class="image_tile" ng-repeat="post in posts" style="background-image: url({{post.url}})">
     <a href="" ng-tap="$navigate.go('/post/{{post.id}}', 'slide', false)"></a>
     <div class="proportional_helper"></div>

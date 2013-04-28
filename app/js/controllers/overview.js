@@ -14,13 +14,7 @@ define(function () {
     };
 
     $scope.loadSubreddits = function(){
-      $scope.subredditNames = RedditAPI.getSubredditNames();
-      $scope.subreddits = [];
-      for(var i = 0, subredditName; subredditName = $scope.subredditNames[i]; i++){
-        var imageUrl = RedditAPI.getSubredditFirstImageUrl(subredditName);
-        var subreddit = {'name': subredditName, 'first_image_url': imageUrl};
-        $scope.subreddits.push(subreddit);
-      };
+      $scope.subreddits = RedditAPI.getSubreddits();
     };
 
     $scope.loadSubreddits();

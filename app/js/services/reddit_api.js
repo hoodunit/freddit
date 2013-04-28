@@ -16,15 +16,35 @@ define(function () {
     this.username = $q.defer();
 
     var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
-    this.subredditNames = DEFAULT_SUBREDDITS;
+
     var subRedditPosts = null;
 
     var FIRST_IMAGE_SPECULATIVE_SIZE = 10;
     var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
 
-    this.getSubredditNames = function(){
-      return this.subredditNames;
+    this.resetSubreddits = function(){
+      this.subredditNames = DEFAULT_SUBREDDITS;
+      this.subreddits = null;
     }
+
+    this.getSubreddits = function(){
+      if(this.subreddits === null){
+        return this.loadSubreddits();
+      } else {
+        return this.subreddits;
+      }
+    };
+
+    this.loadSubreddits = function(){
+      var subreddits = [];
+      for(var i = 0, subredditName; subredditName = this.subredditNames[i]; i++){
+        var imageUrl = this.getSubredditFirstImageUrl(subredditName);
+        var subreddit = {'name': subredditName, 'first_image_url': imageUrl};
+        subreddits.push(subreddit);
+      };
+      this.subreddits = subreddits;
+      return subreddits;
+    };
 
     this.login = function(callback) {
       var login_url = REDDIT_SSL_URL + '/api/v1/authorize'
@@ -47,9 +67,9 @@ define(function () {
         if(event.data && event.data.access_token){
           accessToken = event.data.access_token;
           redditApi.fetchUsername();
-          redditApi.loadUserSubredditNames(callback);
+          redditApi.getUserSubredditNames(callback);
         }
-      }
+      };
     };
 
     this.getUsername = function(){
@@ -68,6 +88,7 @@ define(function () {
     this.logout = function(callback){
       accessToken = null;
       this.username = $q.defer();
+      this.resetSubreddits();
       callback();
     };
 
@@ -93,6 +114,9 @@ define(function () {
         if (i == data.data.children.length) {
           imageUrl.resolve(DEFAULT_IMAGE_URL);
         } 
+      }). 
+      error(function(data, status) {
+        imageUrl.resolve(DEFAULT_IMAGE_URL);
       });
       return imageUrl.promise;
     };
@@ -120,6 +144,60 @@ define(function () {
           }
         }
         posts.resolve(parsedPosts);
+      }).
+      error(function(data, status) {
+       var errorMsg = { 'id': 0, 'url': '',
+                        'title': 'Error getting posts' };
+       var errorPost = [];
+       errorPost.push(errorMsg);
+       subRedditPosts.push(errorMsg);
+       posts.resolve(errorPost);
+      });
+
+      return posts.promise;
+    };
+
+     this.getSubredditPostsSortedBy = function(subredditName, sortParam){
+      // fetch posts sorted by sortParam
+      var posts = $q.defer();
+
+      if(!(sortParam === "new" ||  sortParam === "rising" || sortParam === "top" ||sortParam === "hot" || sortParam === "controversial")){
+        console.log("Some weird sorting parameter given");
+        return null;
+      }
+      console.log(sortParam);
+      var url = REDDIT_URL + '/r/' + subredditName + '/' + sortParam + '.json?jsonp=JSON_CALLBACK&obey_over18=true';
+      
+      var extractDirectImageLink = this.extractDirectImageLink;
+
+      subRedditPosts = [];
+      $http.jsonp(url).success(function(data){
+        console.log("url worked");
+        var postsData = data.data.children;
+        var parsedPosts = [];
+
+        for(var i = 0; i < postsData.length; i++){
+          var postData = postsData[i];
+          var directLink = extractDirectImageLink(postData.data.url);
+          if(directLink !== null){
+            var post = {'id': postData.data.id,
+                        'url': directLink,
+                        'title': postData.data.title};
+            parsedPosts.push(post);
+
+            //Global
+            subRedditPosts.push(post);
+          }
+        }
+        posts.resolve(parsedPosts);
+      }).error(function(data, status) {
+       console.log(status); 
+       var errorMsg = { 'id': 0, 'url': '',
+                        'title': 'Error getting posts' };
+       var errorPost = [];
+       errorPost.push(errorMsg);
+       subRedditPosts.push(errorMsg);
+       posts.resolve(errorPost);
       });
 
       return posts.promise;
@@ -165,11 +243,12 @@ define(function () {
       return null;
     };
 
-    this.loadUserSubredditNames = function(callback){
+    this.getUserSubredditNames = function(callback){
       var url = REDDIT_OAUTH_URL + '/subreddits/mine/subscriber.json';
       var headers = {'Authorization': 'bearer ' + accessToken};
 
       var redditApi = this;
+      var subredditNames = [];
 
       $http.get(url, {headers: headers}).success(function(subscribedData){
         var subredditsData = subscribedData.data.children;
@@ -180,6 +259,7 @@ define(function () {
         }
         
         redditApi.subredditNames = subredditNames;
+        redditApi.subreddits = null;
         callback();
       });
     };
@@ -218,6 +298,7 @@ define(function () {
         return ids;
     };
 
+    this.resetSubreddits();
   }
 
   RedditAPI.$inject = ['$http', '$q', '$window'];

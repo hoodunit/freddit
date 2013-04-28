@@ -8,19 +8,20 @@
 
   </header>
 </section>
-<p>{{post}}</p>
-<p ng-show="{!{post}}">No post with that ID</p>
-<section class="view detail" ng-show="{{post}}">
+<p ng-show="!post;">No post with that ID</p>
+<section class="view detail" ng-show="post;">
   <div class="image_container" style="background-image: url({{infoPost.url}})">
-    <div class="fading_button">
-      <a href="" ng-tap="$navigate.go('/post/{{nextPost}}', 'modal', true)"></a>
+
+    <div class="fading_button" ng-show="existNextPost;">
+      <a href="" ng-tap="$navigate.go('/post/{{nextPost}}', 'slide', true)"></a>
       <div class="proportional_helper"></div>
       <div class="vertically_centered previous_button">
         <a href="" ng-tap="$navigate.go('/post/{{nextPost}}', 'slide', true)"></a>
         &lt;
       </div>
     </div>
-    <div class="fading_button">
+
+    <div class="fading_button" ng-show="existPreviousPost;">
       <a href="" ng-tap="$navigate.go('/post/{{previousPost}}', 'slide', false)"></a>
       <div class="proportional_helper"></div>
       <div class="vertically_centered next_button">
@@ -28,6 +29,7 @@
         &gt;
       </div>
     </div>
+
   </div>
   <div class="info_container">
     <div class="faux_shadow"></div>

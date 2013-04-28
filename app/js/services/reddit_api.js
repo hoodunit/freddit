@@ -189,7 +189,11 @@ define(function () {
       var url = REDDIT_URL + '/by_id/t3_' + postId + '.json?jsonp=JSON_CALLBACK';
       $http.jsonp(url).success(function(object){
           var postData = object.data.children[0].data;
+          //console.log(postData);
           post.resolve(postData);
+        }).error(function(object){
+          console.log("meow");
+          post.reject(false);
         });
       return post.promise;
     };

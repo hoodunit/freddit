@@ -25,6 +25,10 @@ define(['angular', 'js/services/services', 'js/directives/directives',
                      templateUrl: 'views/post.html',
                      controller: 'PostCtrl'
                    })
+                   .when('/settings', {
+                     templateUrl: 'views/settings.html',
+                     controller: 'SettingsCtrl'
+                   })
                    .otherwise({
                      redirectTo: '/'
                    });
@@ -34,7 +38,8 @@ define(['angular', 'js/services/services', 'js/directives/directives',
                  [
                    'views/overview.html',
                    'views/post.html',
-                   'views/subreddits.html'
+                   'views/subreddits.html',
+                   'views/settings.html'
                    
                  ].forEach(function(path) {
                    $http.get(path, { cache: $templateCache });

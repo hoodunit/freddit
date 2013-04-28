@@ -28,17 +28,18 @@ define(['angular', 'mocks'], function () {
         RedditAPI.loadUserSubreddits = function(callback){callback(userSubredditNames);};
         spyOn(RedditAPI, 'loadUserSubreddits').andCallThrough();
         spyOn(RedditAPI, 'getUsername').andReturn(username);
+        spyOn(RedditAPI, 'getSubredditNames').andReturn(defaultSubredditNames);
 
 	$controller('OverviewCtrl', {
-	  $scope : scope,
-          DEFAULT_SUBREDDITS: defaultSubredditNames
+	  $scope : scope
 	});
       });			
     });
 
-    it('should set subreddits first based on the default list', function () {
+    it('should set subreddit from RedditAPI', inject(function(RedditAPI) {
+      expect(scope.subredditNames).toEqual(RedditAPI.getSubredditNames());
       expect(scope.subreddits).toEqual(defaultSubreddits);
-    });
+    }));
 
     it('should set username from RedditAPI', inject(function(RedditAPI){
       expect(scope.username).toEqual(RedditAPI.getUsername());
@@ -54,10 +55,12 @@ define(['angular', 'mocks'], function () {
         expect(RedditAPI.login).toHaveBeenCalled();
       }));
 
-      it('should load user subreddits after logging in', function () {
+      it('should load user subreddits after logging in', inject(function (RedditAPI) {
+        expect(scope.subreddits).toEqual(defaultSubreddits);
+        RedditAPI.getSubredditNames.andReturn(userSubredditNames);
         scope.login();
         expect(scope.subreddits).toEqual(userSubreddits);
-      });
+      }));
 
       it('should not load user subreddits if login fails', inject(function (RedditAPI) {
         RedditAPI.login = function(callback){};

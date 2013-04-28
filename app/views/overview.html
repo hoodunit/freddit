@@ -7,6 +7,7 @@
     <menu type="toolbar">
       <button ng-show="loggedIn()" ng-click="logout()">Sign out</button>
       <button ng-show="!loggedIn()" ng-click="login()">Sign in</button>
+      <button ng-tap="$navigate.go('settings', 'modal')">S</button>
     </menu>
     <h1 ng-show="!loggedIn()">Freddit</h1>
     <h1 ng-show="loggedIn()">Freddit ({{username}})</h1>

@@ -93,6 +93,9 @@ define(function () {
         if (i == data.data.children.length) {
           imageUrl.resolve(DEFAULT_IMAGE_URL);
         } 
+      }). 
+      error(function(data, status) {
+        imageUrl.resolve(DEFAULT_IMAGE_URL);
       });
       return imageUrl.promise;
     };
@@ -120,6 +123,14 @@ define(function () {
           }
         }
         posts.resolve(parsedPosts);
+      }).
+      error(function(data, status) {
+       var errorMsg = { 'id': 0, 'url': '',
+                        'title': 'Error getting posts' };
+       var errorPost = [];
+       errorPost.push(errorMsg);
+       subRedditPosts.push(errorMsg);
+       posts.resolve(errorPost);
       });
 
       return posts.promise;

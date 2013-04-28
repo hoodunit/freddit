@@ -264,32 +264,83 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         $httpBackend.verifyNoOutstandingRequest();
      });
 
-     var REDDIT_URL = 'http://reddit.com';
      var FIRST_IMAGE_SPECULATIVE_SIZE = 10; 
      var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
+     var REQUEST_URL = 'http://reddit.com/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE;
 
-     it('a result with no good image url should return default url', inject(function(RedditAPI) {
+     it('a result with no good image url should return default url', inject(function(RedditAPI, $rootScope) {
        var answer = {'data':{'children':[ {'data':{'url': ''}} ] }};
-       $httpBackend.expectJSONP(REDDIT_URL + '/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE).respond(answer);
-       var deferredOutput = RedditAPI.getSubredditFirstImageUrl('test');
+       $httpBackend.expectJSONP(REQUEST_URL).respond(answer);
+       var deferredOutputPromise = RedditAPI.getSubredditFirstImageUrl('test');
        $httpBackend.flush();
-       deferredOutput.then(function(value){
-         expect(value).toEqual(DEFAULT_IMAGE_URL);
-        });
+       var output;
+       deferredOutputPromise.then(function(value){ output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual(DEFAULT_IMAGE_URL);
      }));
 
-     it('a result with a good image url should return the url', inject(function(RedditAPI) {
-       var url = DEFAULT_IMAGE_URL;
-       var answer = {'data':{'children':[ {'data':{'url': url}} ] }};
-       $httpBackend.expectJSONP(REDDIT_URL + '/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE).respond(answer);
-       var deferredOutput = RedditAPI.getSubredditFirstImageUrl('test');
+     it('a result with a good image url should return the url', inject(function(RedditAPI, $rootScope) {
+       var testUrl = DEFAULT_IMAGE_URL;
+       var answer = {'data':{'children':[ {'data':{'url': testUrl}} ] }};
+       $httpBackend.expectJSONP(REQUEST_URL).respond(answer);
+       var deferredOutputPromise = RedditAPI.getSubredditFirstImageUrl('test');
        $httpBackend.flush();
-       deferredOutput.then(function(value){
-         expect(value).toEqual(url);
-        });
+       var output;
+       deferredOutputPromise.then(function(value){ output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual(testUrl);
+     }));
+
+     it('a failed Reddit fetch should return default url', inject(function(RedditAPI, $rootScope) {
+       $httpBackend.expectJSONP(REQUEST_URL).respond(500, '');
+       var deferredOutputPromise = RedditAPI.getSubredditFirstImageUrl('test');
+       $httpBackend.flush();
+       var output;
+       deferredOutputPromise.then(function(value){ output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual(DEFAULT_IMAGE_URL);
      }));
    });
 
+
+   describe('getSubredditPosts', function() {
+     var $httpBackend;
+
+     beforeEach(inject(function($injector){
+       $httpBackend = $injector.get('$httpBackend');
+     }));
+
+     afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+     });
+     var REQUEST_URL = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=true';
+
+     it('a correct subreddit name gives a set of posts', inject(function(RedditAPI,$rootScope) {
+       var testUrl = 'http://somewhere/test.jpg';
+       var answer = {'data':{'children':[ {'data':{
+         'url': testUrl,
+         'id': 0,
+         'title': 'text'  }} ] }};
+       $httpBackend.expectJSONP(REQUEST_URL).respond(answer);
+       var deferredOutputPromise = RedditAPI.getSubredditPosts('test');
+       $httpBackend.flush();
+       var output;
+       deferredOutputPromise.then(function(value) { output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual([{'id':0, 'url': testUrl, 'title':'text'}]);
+     }));
+
+     it('a failed fetch gives error message', inject(function(RedditAPI,$rootScope) {
+       $httpBackend.expectJSONP(REQUEST_URL).respond(500, '');
+       var deferredOutputPromise = RedditAPI.getSubredditPosts('test');
+       $httpBackend.flush();
+       var output;
+       deferredOutputPromise.then(function(value) { output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual([{'id':0, 'url': '', 'title':'Error getting posts'}]);
+     }));
+   });
 
   });
 

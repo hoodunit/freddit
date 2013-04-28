@@ -19,6 +19,9 @@ define(function () {
     this.subredditNames = DEFAULT_SUBREDDITS;
     var subRedditPosts = null;
 
+    var FIRST_IMAGE_SPECULATIVE_SIZE = 10;
+    var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
+
     this.getSubredditNames = function(){
       return this.subredditNames;
     }
@@ -74,24 +77,21 @@ define(function () {
 
     this.getSubredditFirstImageUrl = function(subredditName){
       var imageUrl = $q.defer();
-      var speculativeSize = 10;
-      var url = REDDIT_URL + '/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + speculativeSize;
+      var url = REDDIT_URL + '/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE;
       var extractDirectImageLink = this.extractDirectImageLink;
       $http.jsonp(url).success(function(data){
-        //console.log("Subreddit: "+subredditName+" Speculative size:"+data.data.children.length);
         var i = 0;
         for (i = 0;i < data.data.children.length;i ++) {
           var firstPost = data.data.children[i];
           var directLink = extractDirectImageLink(firstPost.data.url);
           if (directLink != null) {
+            //console.log('FirstImage speculative: hit at #'+i);
             imageUrl.resolve(directLink);
-            //console.log("Selected: "+directLink);
             break;
           }
         }
         if (i == data.data.children.length) {
-          //console.log("Subreddit: "+subredditName+" USING DEFAULT");
-          imageUrl.resolve("http://www.redditstatic.com/icon.png");
+          imageUrl.resolve(DEFAULT_IMAGE_URL);
         } 
       });
       return imageUrl.promise;
@@ -133,19 +133,17 @@ define(function () {
         if (/i\./.exec(res[1])) {
           return url;
         }
-        // TODO: other kinds of imgur source ?
         return null;
       }
-      // fbcdn
+      // Facebook CDN
       if ((res = /(.*)fbcdn(.*)\/(.*)\.(.*)/.exec(url))) {
         return url;
       }
-      // flickr
+      // Flickr farms
       if (res = /(.*)flickr\.com(.*)/.exec(url)) {
         if (/farm(.*)staticflickr\.com(.*)\.(.*)/.exec(url)) {
           return url;
         }
-        // TODO: use their API to get direct link?
         return null;
       }
       // tumblr
@@ -159,7 +157,7 @@ define(function () {
       if (res = /(.*)i\.chzbgr\.com(.*)/.exec(url)) {
         return url;
       }
-      // heuristic: .jpg/.gif/.png are direct links!
+      // heuristic: anything else that ends in .jpg/.gif/.png are direct links!
       if (res = /(.*)\.jpg|(.*)\.gif|(.*)\.png/.exec(url)) {
         return url;
       }

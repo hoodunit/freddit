@@ -11,12 +11,12 @@ define(function () {
       console.log("Breaking promises" +  info);
       $scope.post = false;
     });
-    //$scope.infoPost = RedditAPI.getPost(postId);
+    $scope.infoPost = RedditAPI.getPost(postId);
     
 
-	  //var ids = RedditAPI.getPosts(postId);
-    //$scope.previousPost = ids[1];
-    //$scope.nextPost = ids[0];
+	  var ids = RedditAPI.getPosts(postId);
+    $scope.previousPost = ids[1];
+    $scope.nextPost = ids[0];
     
   }
 

@@ -2,7 +2,12 @@
   'use strict';
   var file, requireModules;
   requireModules = [];
-  
+
+  // In newer versions, it has been renamed to __karma__
+  if (window.__testacular__ == undefined && window.__karma__ != null) {
+    window.__testacular__ = window.__karma__;
+  }  
+
   for (file in window.__testacular__.files) {
     if (window.__testacular__.files.hasOwnProperty(file)) {
       if (file.substring(file.length - 7, file.length) === 'Test.js') {

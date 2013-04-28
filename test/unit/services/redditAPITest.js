@@ -215,6 +215,82 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
       }));
     });
 
+   describe('extractDirectImageLink', function() {
+     it('should return null for these', inject(function(RedditAPI) {
+       var testcases = [
+         'http://www.google.com/',
+         'https://www.google.com/',
+         'http://imgur.com/QWER',
+         'http://imgur.com/gallery/QWER',
+         'http://imgur.com/a/QWER',
+         'http://imgur.com/QWER.jpg',
+         'http://tumblr.com/test',
+         'http://flickr.com/qwer/qwer',
+         'http://www.flickr.com/photos/test/54321/in/set-123',
+         ];
+       for (var i = 0;i < testcases.length;i ++) {
+         var output = RedditAPI.extractDirectImageLink(testcases[i]);
+         expect(output).toEqual(null);
+       }
+     }));
+     it('should return url for these', inject(function(RedditAPI) {
+       var testcases = [
+         'http://i.imgur.com/QWER.jpg',
+         'http://sphotos-d.ak.fbcdn.net/hphotos-ak-ash3/1234_1234_1234.jpg',
+         'http://25.media.tumblr.com/baf27/tumblr_qwer_400.jpg',
+         'http://tumblr.com/test.png',
+         'http://i.chzbgr.com/qwer',
+         'http://farm2.staticflickr.com/2233/56424_3ddea_z.jpg',
+         'www.somewhere.com/test.png',
+         'null.xx/abc.gif',
+         'asdf/qwer.jpg',
+         ];
+       for (var i = 0;i < testcases.length;i ++) {
+         var output = RedditAPI.extractDirectImageLink(testcases[i]);
+         expect(output).toEqual(testcases[i]);
+       }
+     }));
+   });
+
+   describe('getSubredditFirstImageUrl', function() {
+     var $httpBackend;
+
+     beforeEach(inject(function($injector){
+       $httpBackend = $injector.get('$httpBackend');
+     }));
+
+     afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+     });
+
+     var REDDIT_URL = 'http://reddit.com';
+     var FIRST_IMAGE_SPECULATIVE_SIZE = 10; 
+     var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
+
+     it('a result with no good image url should return default url', inject(function(RedditAPI) {
+       var answer = {'data':{'children':[ {'data':{'url': ''}} ] }};
+       $httpBackend.expectJSONP(REDDIT_URL + '/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE).respond(answer);
+       var deferredOutput = RedditAPI.getSubredditFirstImageUrl('test');
+       $httpBackend.flush();
+       deferredOutput.then(function(value){
+         expect(value).toEqual(DEFAULT_IMAGE_URL);
+        });
+     }));
+
+     it('a result with a good image url should return the url', inject(function(RedditAPI) {
+       var url = DEFAULT_IMAGE_URL;
+       var answer = {'data':{'children':[ {'data':{'url': url}} ] }};
+       $httpBackend.expectJSONP(REDDIT_URL + '/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE).respond(answer);
+       var deferredOutput = RedditAPI.getSubredditFirstImageUrl('test');
+       $httpBackend.flush();
+       deferredOutput.then(function(value){
+         expect(value).toEqual(url);
+        });
+     }));
+   });
+
+
   });
 
 });

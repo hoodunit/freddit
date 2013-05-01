@@ -350,11 +350,26 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
        $rootScope.$apply();
        expect(output).toEqual(DEFAULT_IMAGE_URL);
      }));
+
+     it('should obey NSFW flag', inject(function(RedditAPI, $rootScope, Settings) {
+       var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=false&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE;
+
+       spyOn(Settings, 'getNSFWFlag').andReturn(false);
+       $httpBackend.expectJSONP(REQUEST_URL).respond(500, '');
+       RedditAPI.getSubredditFirstImageUrl('test');
+       $httpBackend.flush();
+
+       Settings.getNSFWFlag.andReturn(true);
+       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(500, '');
+       RedditAPI.getSubredditFirstImageUrl('test');
+       $httpBackend.flush();
+     }));
    });
 
 
    describe('getSubredditPosts', function() {
      var $httpBackend;
+     var REQUEST_URL = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=true';
 
      beforeEach(inject(function($injector){
        $httpBackend = $injector.get('$httpBackend');
@@ -364,7 +379,6 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
         $httpBackend.verifyNoOutstandingExpectation();
         $httpBackend.verifyNoOutstandingRequest();
      });
-     var REQUEST_URL = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=true';
 
      it('a correct subreddit name gives a set of posts', inject(function(RedditAPI,$rootScope) {
        var testUrl = 'http://somewhere/test.jpg';
@@ -389,6 +403,60 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
        deferredOutputPromise.then(function(value) { output = value; });
        $rootScope.$apply();
        expect(output).toEqual([{'id':0, 'url': '', 'title':'Error getting posts'}]);
+     }));
+
+     it('should obey NSFW flag', inject(function(RedditAPI, $rootScope, Settings) {
+     var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=false';
+
+       spyOn(Settings, 'getNSFWFlag').andReturn(false);
+       $httpBackend.expectJSONP(REQUEST_URL).respond(500, '');
+       RedditAPI.getSubredditPosts('test');
+       $httpBackend.flush();
+
+       Settings.getNSFWFlag.andReturn(true);
+       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(500, '');
+       RedditAPI.getSubredditPosts('test');
+       $httpBackend.flush();
+     }));
+   });
+
+   describe('getSubredditPostsSortedBy', function() {
+     var $httpBackend;
+     var REQUEST_URL = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=new';
+
+     beforeEach(inject(function($injector){
+       $httpBackend = $injector.get('$httpBackend');
+     }));
+
+     afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+     });
+
+     it('should obey NSFW flag', inject(function(RedditAPI, $rootScope, Settings) {
+     var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=false&sort=new';
+
+       spyOn(Settings, 'getNSFWFlag').andReturn(false);
+       $httpBackend.expectJSONP(REQUEST_URL).respond(500, '');
+       RedditAPI.getSubredditPostsSortedBy('test', 'new');
+       $httpBackend.flush();
+
+       Settings.getNSFWFlag.andReturn(true);
+       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(500, '');
+       RedditAPI.getSubredditPostsSortedBy('test', 'new');
+       $httpBackend.flush();
+     }));
+   });
+
+   describe('NSFW flag', function() {
+     it('getNSFWString should return proper string based on Settings NSFW flag',
+        inject(function(RedditAPI, Settings) {
+        var SHOW_NSFW = "obey_over18=false";
+        var HIDE_NSFW = "obey_over18=true";
+        spyOn(Settings, 'getNSFWFlag').andReturn(false);
+        expect(RedditAPI.getNSFWString()).toEqual(HIDE_NSFW);
+        Settings.getNSFWFlag.andReturn(true);
+        expect(RedditAPI.getNSFWString()).toEqual(SHOW_NSFW);
      }));
    });
 

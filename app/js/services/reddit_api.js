@@ -1,7 +1,7 @@
 define(function () {
   'use strict';
 
-  function RedditAPI($http, $q, $window){
+  function RedditAPI($http, $q, $window, Settings){
     var STATE = 'f398dasf8wet89823t';
     var RESPONSE_TYPE = 'code';
     var CLIENT_ID = 'URa40XpCminqLw';
@@ -11,6 +11,8 @@ define(function () {
     var REDDIT_URL = 'http://reddit.com';
     var REDDIT_SSL_URL = 'https://ssl.reddit.com';
     var REDDIT_OAUTH_URL = 'http://localhost:8081/oauth';
+    var SHOW_NSFW = "obey_over18=false";
+    var HIDE_NSFW = "obey_over18=true";
 
     var accessToken = null;
     this.username = $q.defer();
@@ -98,7 +100,9 @@ define(function () {
 
     this.getSubredditFirstImageUrl = function(subredditName){
       var imageUrl = $q.defer();
-      var url = REDDIT_URL + '/r/' + subredditName + '/new.json?jsonp=JSON_CALLBACK&obey_over18=true&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE;
+      var url = REDDIT_URL + '/r/'
+        + subredditName + '/new.json?jsonp=JSON_CALLBACK&'
+        + this.getNSFWString() + '&limit=' + FIRST_IMAGE_SPECULATIVE_SIZE;
       var extractDirectImageLink = this.extractDirectImageLink;
       $http.jsonp(url).success(function(data){
         var i = 0;
@@ -123,7 +127,8 @@ define(function () {
 
     this.getSubredditPosts = function(subredditName){
       var posts = $q.defer();
-      var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true';
+      var url = REDDIT_URL + '/r/' + subredditName
+        + '.json?jsonp=JSON_CALLBACK&' + this.getNSFWString();
       var extractDirectImageLink = this.extractDirectImageLink;
       subRedditPosts = [];
       $http.jsonp(url).success(function(data){
@@ -165,8 +170,9 @@ define(function () {
         console.log("Some weird sorting parameter given");
         return null;
       }
-      console.log(sortParam);
-      var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=' + sortParam;
+      var url = REDDIT_URL + '/r/' + subredditName
+         + '.json?jsonp=JSON_CALLBACK&'
+         + this.getNSFWString() + '&sort=' + sortParam;
       var extractDirectImageLink = this.extractDirectImageLink;
       subRedditPosts = [];
       $http.jsonp(url).success(function(data){
@@ -287,10 +293,18 @@ define(function () {
         return ids;
     };
 
+    this.getNSFWString = function(){
+      if(Settings.getNSFWFlag()){
+        return SHOW_NSFW;
+      } else {
+        return HIDE_NSFW;
+      }
+    }
+
     this.resetSubreddits();
   }
 
-  RedditAPI.$inject = ['$http', '$q', '$window'];
+  RedditAPI.$inject = ['$http', '$q', '$window', 'Settings'];
 
   return RedditAPI;
 });

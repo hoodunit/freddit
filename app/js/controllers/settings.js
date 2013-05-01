@@ -1,11 +1,15 @@
 define(function () {
   'use strict';
 
-  function SettingsCtrl($scope, RedditAPI) {
+  function SettingsCtrl($scope, Settings) {
+    $scope.nsfwFlag = Settings.getNSFWFlag();
 
+    $scope.checkNSFW = function(){
+      Settings.setNSFWFlag($scope.nsfwFlag);
+    };
   }
     
-  SettingsCtrl.$inject = ['$scope', 'RedditAPI'];
+  SettingsCtrl.$inject = ['$scope', 'Settings'];
 
   return SettingsCtrl;
 

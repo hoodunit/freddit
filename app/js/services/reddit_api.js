@@ -110,7 +110,6 @@ define(function () {
           var firstPost = data.data.children[i];
           var directLink = extractDirectImageLink(firstPost.data.url);
           if (directLink != null) {
-            //console.log('FirstImage speculative: hit at #'+i);
             imageUrl.resolve(directLink);
             break;
           }
@@ -133,10 +132,15 @@ define(function () {
       // fetch posts sorted by sortParam
       var posts = $q.defer();
 
-      if(!(sortParam === "new" ||  sortParam === "rising" || sortParam === "top" ||sortParam === "hot" || sortParam === "controversial")){
-        console.log("Some weird sorting parameter given");
+      if(!(sortParam === "new"
+           || sortParam === "rising"
+           || sortParam === "top"
+           || sortParam === "hot"
+           || sortParam === "controversial")){
+        console.log("Invalid sorting parameter: '" + sortParam + "'");
         return null;
       }
+
       var url = REDDIT_URL + '/r/' + subredditName
         + '.json?jsonp=JSON_CALLBACK&'
         + this.getNSFWString() + '&sort=' + sortParam;
@@ -147,19 +151,29 @@ define(function () {
         var parsedPosts = [];
 
         for(var i = 0; i < postsData.length; i++){
-          var postData = postsData[i];
-          var directLink = extractDirectImageLink(postData.data.url);
-          if(directLink !== null){
-            var post = {'id': postData.data.id,
-                        'url': directLink,
-                        'title': postData.data.title};
-            parsedPosts.push(post);
+          var postData = postsData[i].data;
+          var over18 = postData['over_18'];
+          console.log(over18);
+          if(Settings.getNSFWFlag() || over18 !== true){
+            var directLink = extractDirectImageLink(postData.url);
+            if(directLink !== null){
+              var post = {'id': postData.id,
+                          'url': directLink,
+                          'title': postData.title};
+              parsedPosts.push(post);
 
-            //Global
-            subRedditPosts.push(post);
+              subRedditPosts.push(post);
+            }
           }
         }
         posts.resolve(parsedPosts);
+      }).error(function(data, status) {
+        var errorMsg = { 'id': 0, 'url': '',
+                         'title': 'Error getting posts' };
+        var errorPost = [];
+        errorPost.push(errorMsg);
+        subRedditPosts.push(errorMsg);
+        posts.resolve(errorPost);
       });
 
       return posts.promise;
@@ -231,10 +245,8 @@ define(function () {
       var url = REDDIT_URL + '/by_id/t3_' + postId + '.json?jsonp=JSON_CALLBACK';
       $http.jsonp(url).success(function(object){
           var postData = object.data.children[0].data;
-          //console.log(postData);
           post.resolve(postData);
         }).error(function(object){
-          console.log("meow");
           post.reject(false);
         });
       return post.promise;

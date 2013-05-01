@@ -7,11 +7,12 @@ define(['angular', 'mocks'], function () {
     beforeEach(function () {
       module('controllers');
 
-      inject(function($rootScope, $controller, Settings) {
+      inject(function($rootScope, $controller, Settings, RedditAPI) {
         scope = $rootScope.$new();
 
         spyOn(Settings, 'getNSFWFlag').andReturn(false);
         spyOn(Settings, 'setNSFWFlag');
+        spyOn(RedditAPI, 'getSubreddits').andReturn(null);
 
 	$controller('SettingsCtrl', {
 	  $scope: scope

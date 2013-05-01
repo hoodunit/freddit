@@ -12,10 +12,12 @@ define(['angular', 'mocks'], function () {
     beforeEach(function () {
       module('controllers');
 
-      inject(function($rootScope, $controller, RedditAPI) {
+      inject(function($rootScope, $controller, RedditAPI, $q) {
         scope = $rootScope.$new();
-
-        spyOn(RedditAPI, 'getSubredditPosts').andReturn(subredditPosts);
+        var posts = $q.defer();
+        posts.resolve(subredditPosts);
+        spyOn(RedditAPI, 'getSubredditPosts').andCallThrough();
+        spyOn(RedditAPI, 'getSubredditPostsSortedBy').andReturn(posts.promise);
 
 	$controller('SubredditsCtrl', {
 	  $scope: scope,
@@ -30,7 +32,6 @@ define(['angular', 'mocks'], function () {
 
     it('should fetch the latest lolcats posts', inject(function(RedditAPI) {
       expect(RedditAPI.getSubredditPosts).toHaveBeenCalledWith(subredditName);
-      expect(scope.posts).toEqual(subredditPosts);
     }));
   });
 });

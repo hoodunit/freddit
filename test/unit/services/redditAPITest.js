@@ -395,14 +395,15 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
        expect(output).toEqual([{'id':0, 'url': testUrl, 'title':'text'}]);
      }));
 
-     it('a failed fetch gives error message', inject(function(RedditAPI,$rootScope) {
+     it('a failed fetch should break the promise', inject(function(RedditAPI,$rootScope) {
        $httpBackend.expectJSONP(REQUEST_URL).respond(500, '');
        var deferredOutputPromise = RedditAPI.getSubredditPosts('test');
        $httpBackend.flush();
        var output;
-       deferredOutputPromise.then(function(value) { output = value; });
+       deferredOutputPromise.then(function(value) { output = 'NOT_BROKEN'; },
+                                  function(value) { output = 'BROKEN'; });
        $rootScope.$apply();
-       expect(output).toEqual([{'id':0, 'url': '', 'title':'Error getting posts'}]);
+       expect(output).toEqual('BROKEN');
      }));
 
      it('should obey NSFW flag', inject(function(RedditAPI, $rootScope, Settings) {

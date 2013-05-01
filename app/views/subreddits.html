@@ -28,7 +28,8 @@
 
   <!-- image tiles -->
 
-  <div class="image_tile" ng-repeat="post in posts" style="background-image: url({{post.url}})">
+  <p ng-show="havePosts == false;">Failed to retrieve subreddit posts.</p>
+  <div ng-show="havePosts;" class="image_tile" ng-repeat="post in posts" style="background-image: url({{post.url}})">
     <a href="" ng-tap="$navigate.go('/post/{{post.id}}', 'slide', false)"></a>
     <div class="proportional_helper"></div>
 

@@ -1,6 +1,7 @@
 <link rel="stylesheet" type="text/css" href="shared/style/headers.css">
 <link rel="stylesheet" type="text/css" href="shared/style/buttons.css">
 <link rel="stylesheet" type="text/css" href="shared/style/switches.css">
+<link rel="stylesheet" type="text/css" href="shared/style/input_areas.css">
 <link rel="stylesheet" type="text/css" href="css/settings.css">
 <section role="region">
   <header>
@@ -17,5 +18,25 @@
       <input type="checkbox" ng:model="nsfwFlag" ng:click="checkNSFW()"/>
       <span></span>
     </label>
+  <div class="settings_item">
+    <h1>Add subreddit</h1>
+    <input placeholder="subreddit name" required="" type="text" ng-model="new_subreddit">
+    <button ng-click="addSubreddit(new_subreddit);">Add</button>
+  </div>
+
+  <div class="settings_item">
+    <h1>
+      Remove subreddit
+    </h1>
+  </div>
+
+  <div class="settings_item" ng-repeat="subreddit in subreddits" ng-class-even="'light_background'">
+    <div class="settings_name" >
+      <h2>{{subreddit.name}}</h2>
+    </div>
+    <button class="danger" ng-tap="removeSubreddit('{{subreddit.name}}');">Remove</button>
+    
+  </div>
+
   </div>
 </section>

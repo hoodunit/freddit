@@ -129,9 +129,6 @@ define(function () {
     };
 
     this.getSubredditPostsSortedBy = function(subredditName, sortParam){
-      // fetch posts sorted by sortParam
-      var posts = $q.defer();
-
       if(!(sortParam === "new"
            || sortParam === "rising"
            || sortParam === "top"
@@ -141,6 +138,7 @@ define(function () {
         return null;
       }
 
+      var posts = $q.defer();
       var url = REDDIT_URL + '/r/' + subredditName
         + '.json?jsonp=JSON_CALLBACK&'
         + this.getNSFWString() + '&sort=' + sortParam;
@@ -153,7 +151,6 @@ define(function () {
         for(var i = 0; i < postsData.length; i++){
           var postData = postsData[i].data;
           var over18 = postData['over_18'];
-          console.log(over18);
           if(Settings.getNSFWFlag() || over18 !== true){
             var directLink = extractDirectImageLink(postData.url);
             if(directLink !== null){
@@ -161,19 +158,13 @@ define(function () {
                           'url': directLink,
                           'title': postData.title};
               parsedPosts.push(post);
-
               subRedditPosts.push(post);
             }
           }
         }
         posts.resolve(parsedPosts);
       }).error(function(data, status) {
-        var errorMsg = { 'id': 0, 'url': '',
-                         'title': 'Error getting posts' };
-        var errorPost = [];
-        errorPost.push(errorMsg);
-        subRedditPosts.push(errorMsg);
-        posts.resolve(errorPost);
+        posts.reject('getSubredditPostsSortedBy: API access failed');
       });
 
       return posts.promise;

@@ -6,16 +6,24 @@ define(function () {
     $scope.subredditName = $routeParams.id;
     $scope.orderBy = $routeParams.order;
 
-    if($scope.orderBy){
-    	
-    	$scope.posts = RedditAPI.getSubredditPostsSortedBy($scope.subredditName,$scope.orderBy);
-    	if($scope.posts === null){
-    		$scope.posts = RedditAPI.getSubredditPosts($scope.subredditName);
-    	} 
-    } else {
-    	$scope.posts = RedditAPI.getSubredditPosts($scope.subredditName);
+    if($scope.orderBy) {
+      var promise = RedditAPI.getSubredditPostsSortedBy($scope.subredditName,$scope.orderBy);
+      promise.then(function(posts) {
+         $scope.havePosts = true;
+         $scope.posts = posts;
+       }, function(reason) {
+         $scope.havePosts = false;
+       });
     }
-
+    if($scope.posts == null) {
+      var promise = RedditAPI.getSubredditPosts($scope.subredditName);
+      promise.then(function(posts) {
+         $scope.havePosts = true;
+         $scope.posts = posts;
+       }, function(reason) {
+         $scope.havePosts = false;
+       });
+    } 
   }
 
   SubredditsCtrl.$inject = ['$scope', '$routeParams', 'RedditAPI'];

@@ -8,12 +8,6 @@
   font-size: 1.5rem;
 }
 
-.faux_shadow
-{
-  height: 4px;
-  background: url("../shared/style/headers/images/ui/shadow.png") repeat-x;
-}
-
 .view.detail img{
 
   height: auto;
@@ -68,7 +62,7 @@
 {
   font: 2.5rem/3rem "MozTT",Sans-serif;
   text-shadow: 2px 2px 3px black;
-}
+} 
 
 .author
 {

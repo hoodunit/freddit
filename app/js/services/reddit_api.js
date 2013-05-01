@@ -126,43 +126,10 @@ define(function () {
     };
 
     this.getSubredditPosts = function(subredditName){
-      var posts = $q.defer();
-      var url = REDDIT_URL + '/r/' + subredditName
-        + '.json?jsonp=JSON_CALLBACK&' + this.getNSFWString();
-      var extractDirectImageLink = this.extractDirectImageLink;
-      subRedditPosts = [];
-      $http.jsonp(url).success(function(data){
-        var postsData = data.data.children;
-        var parsedPosts = [];
-
-        for(var i = 0; i < postsData.length; i++){
-          var postData = postsData[i];
-          var directLink = extractDirectImageLink(postData.data.url);
-          if(directLink !== null){
-            var post = {'id': postData.data.id,
-                        'url': directLink,
-                        'title': postData.data.title};
-            parsedPosts.push(post);
-
-            //Global
-            subRedditPosts.push(post);
-          }
-        }
-        posts.resolve(parsedPosts);
-      }).
-      error(function(data, status) {
-       var errorMsg = { 'id': 0, 'url': '',
-                        'title': 'Error getting posts' };
-       var errorPost = [];
-       errorPost.push(errorMsg);
-       subRedditPosts.push(errorMsg);
-       posts.resolve(errorPost);
-      });
-
-      return posts.promise;
+      return this.getSubredditPostsSortedBy(subredditName, 'hot');
     };
 
-     this.getSubredditPostsSortedBy = function(subredditName, sortParam){
+    this.getSubredditPostsSortedBy = function(subredditName, sortParam){
       // fetch posts sorted by sortParam
       var posts = $q.defer();
 
@@ -171,8 +138,8 @@ define(function () {
         return null;
       }
       var url = REDDIT_URL + '/r/' + subredditName
-         + '.json?jsonp=JSON_CALLBACK&'
-         + this.getNSFWString() + '&sort=' + sortParam;
+        + '.json?jsonp=JSON_CALLBACK&'
+        + this.getNSFWString() + '&sort=' + sortParam;
       var extractDirectImageLink = this.extractDirectImageLink;
       subRedditPosts = [];
       $http.jsonp(url).success(function(data){

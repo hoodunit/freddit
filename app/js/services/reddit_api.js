@@ -19,7 +19,7 @@ define(function () {
 
     var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
 
-    var subRedditPosts = null;
+    var subredditPosts = null;
 
     var FIRST_IMAGE_SPECULATIVE_SIZE = 10;
     var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
@@ -128,22 +128,33 @@ define(function () {
       return this.getSubredditPostsSortedBy(subredditName, 'hot');
     };
 
-    this.getSubredditPostsSortedBy = function(subredditName, sortParam){
-      if(!(sortParam === "new"
-           || sortParam === "rising"
-           || sortParam === "top"
-           || sortParam === "hot"
-           || sortParam === "controversial")){
-        console.log("Invalid sorting parameter: '" + sortParam + "'");
-        return null;
-      }
+    this.getHotSubredditPosts = function(subredditName){
+      return this.getSubredditPostsSortedBy(subredditName, 'hot');
+    };
 
+    this.getNewSubredditPosts = function(subredditName){
+      return this.getSubredditPostsSortedBy(subredditName, 'new');
+    };
+
+    this.getRisingSubredditPosts = function(subredditName){
+      return this.getSubredditPostsSortedBy(subredditName, 'rising');
+    };
+
+    this.getTopSubredditPosts = function(subredditName){
+      return this.getSubredditPostsSortedBy(subredditName, 'top');
+    };
+
+    this.getControversialSubredditPosts = function(subredditName){
+      return this.getSubredditPostsSortedBy(subredditName, 'controversial');
+    };
+
+    this.getSubredditPostsSortedBy = function(subredditName, sortParam){
       var posts = $q.defer();
       var url = REDDIT_URL + '/r/' + subredditName
         + '.json?jsonp=JSON_CALLBACK&'
         + this.getNSFWString() + '&sort=' + sortParam;
       var extractDirectImageLink = this.extractDirectImageLink;
-      subRedditPosts = [];
+      subredditPosts = [];
       $http.jsonp(url).success(function(data){
         var postsData = data.data.children;
         var parsedPosts = [];
@@ -158,7 +169,7 @@ define(function () {
                           'url': directLink,
                           'title': postData.title};
               parsedPosts.push(post);
-              subRedditPosts.push(post);
+              subredditPosts.push(post);
             }
           }
         }
@@ -246,16 +257,16 @@ define(function () {
     this.getPosts = function(postId){
         var previousId = false;
         var nextId = 0;
-        for(var i = 0 ; i < subRedditPosts.length ; i++){
-            if (subRedditPosts[i].id == postId) {
-              if(i == (subRedditPosts.length - 1)){
+        for(var i = 0 ; i < subredditPosts.length ; i++){
+            if (subredditPosts[i].id == postId) {
+              if(i == (subredditPosts.length - 1)){
                 nextId = false;
               } else {
-                nextId = subRedditPosts[i+1].id;
+                nextId = subredditPosts[i+1].id;
               }
               break;
             };
-            previousId = subRedditPosts[i].id;
+            previousId = subredditPosts[i].id;
         }
         var ids = [];
         ids.push(previousId);

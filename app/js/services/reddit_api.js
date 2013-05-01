@@ -108,10 +108,14 @@ define(function () {
         var i = 0;
         for (i = 0;i < data.data.children.length;i ++) {
           var firstPost = data.data.children[i];
-          var directLink = extractDirectImageLink(firstPost.data.url);
-          if (directLink != null) {
-            imageUrl.resolve(directLink);
-            break;
+          var over18 = firstPost.data.over_18;
+
+          if(Settings.getNSFWFlag() || over18 !== true){
+            var directLink = extractDirectImageLink(firstPost.data.url);
+            if (directLink != null) {
+              imageUrl.resolve(directLink);
+              break;
+            }
           }
         }
         if (i == data.data.children.length) {

@@ -3,21 +3,19 @@
 <link rel="stylesheet" type="text/css" href="shared/style/switches.css">
 <link rel="stylesheet" type="text/css" href="shared/style/input_areas.css">
 <link rel="stylesheet" type="text/css" href="css/settings.css">
+
 <section role="region">
   <header>
     <a ng-tap="$navigate.go('/', 'modal', true)"><span class="icon icon-back">back</span></a>
     <h1>Settings</h1>
   </header>
 </section>
+
 <section class="view">
   <div class="settings_item">
-    <div class="settings_name">
       <h1>Show NSFW</h1>
-    </div>
-    <label>
       <input type="checkbox" ng:model="nsfwFlag" ng:click="checkNSFW()"/>
-      <span></span>
-    </label>
+  </div>
   <div class="settings_item">
     <h1>Add subreddit</h1>
     <input placeholder="subreddit name" required="" type="text" ng-model="new_subreddit">
@@ -36,7 +34,5 @@
     </div>
     <button class="danger" ng-tap="removeSubreddit('{{subreddit.name}}');">Remove</button>
     
-  </div>
-
   </div>
 </section>

@@ -405,20 +405,6 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
        $rootScope.$apply();
        expect(output).toEqual('BROKEN');
      }));
-
-     it('should obey NSFW flag', inject(function(RedditAPI, $rootScope, Settings) {
-     var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=false&sort=hot';
-
-       spyOn(Settings, 'getNSFWFlag').andReturn(false);
-       $httpBackend.expectJSONP(REQUEST_URL).respond(500, '');
-       RedditAPI.getSubredditPosts('test');
-       $httpBackend.flush();
-
-       Settings.getNSFWFlag.andReturn(true);
-       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(500, '');
-       RedditAPI.getSubredditPosts('test');
-       $httpBackend.flush();
-     }));
    });
 
    describe('getSubredditPostsSortedBy', function() {
@@ -435,17 +421,64 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
      });
 
      it('should obey NSFW flag', inject(function(RedditAPI, $rootScope, Settings) {
-     var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=false&sort=new';
+       var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=false&sort=new';
+       var testPost = {'url': 'http://somewhere/test.jpg',
+                       'id': 0,
+                       'title': 'text',
+                       'over_18': false};
+       var testParsedPost = {'url': 'http://somewhere/test.jpg',
+                             'id': 0,
+                             'title': 'text'};
+       var testNSFWPost = {'url': 'http://somewhere/test.jpg',
+                           'id': 0,
+                           'title': 'text',
+                           'over_18': true};
+       var testParsedNSFWPost = {'url': 'http://somewhere/test.jpg',
+                                 'id': 0,
+                                 'title': 'text'};
+       var testData = [{'data': testPost}];
+       var testNSFWData = [{'data': testPost}, {'data': testNSFWPost}];
+       var testDataResponse = {'data': {'children': testData}};
+       var testNSFWDataResponse = {'data': {'children': testNSFWData}};
+
+       var expectedSafePosts = [testParsedPost];
+       var expectedNSFWPosts = [testParsedPost, testParsedNSFWPost];
 
        spyOn(Settings, 'getNSFWFlag').andReturn(false);
-       $httpBackend.expectJSONP(REQUEST_URL).respond(500, '');
-       RedditAPI.getSubredditPostsSortedBy('test', 'new');
+       $httpBackend.expectJSONP(REQUEST_URL).respond(testDataResponse);
+       var deferredOutputPromise = RedditAPI.getSubredditPostsSortedBy('test', 'new');
        $httpBackend.flush();
+       var output;
+       deferredOutputPromise.then(function(value) { output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual(expectedSafePosts);
+
+       Settings.getNSFWFlag.andReturn(false);
+       $httpBackend.expectJSONP(REQUEST_URL).respond(testNSFWDataResponse);
+       var deferredOutputPromise = RedditAPI.getSubredditPostsSortedBy('test', 'new');
+       $httpBackend.flush();
+       var output;
+       deferredOutputPromise.then(function(value) { output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual(expectedSafePosts);
 
        Settings.getNSFWFlag.andReturn(true);
-       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(500, '');
-       RedditAPI.getSubredditPostsSortedBy('test', 'new');
+       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(testDataResponse);
+       var deferredOutputPromise = RedditAPI.getSubredditPostsSortedBy('test', 'new');
        $httpBackend.flush();
+       var output;
+       deferredOutputPromise.then(function(value) { output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual(expectedSafePosts);
+
+       Settings.getNSFWFlag.andReturn(true);
+       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(testNSFWDataResponse);
+       var deferredOutputPromise = RedditAPI.getSubredditPostsSortedBy('test', 'new');
+       $httpBackend.flush();
+       var output;
+       deferredOutputPromise.then(function(value) { output = value; });
+       $rootScope.$apply();
+       expect(output).toEqual(expectedNSFWPosts);
      }));
    });
 

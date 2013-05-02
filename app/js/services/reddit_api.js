@@ -19,6 +19,7 @@ define(function () {
 
     var subRedditPosts = null;
 
+    var lastPost =  null;
     var FIRST_IMAGE_SPECULATIVE_SIZE = 10;
     var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
 
@@ -127,6 +128,7 @@ define(function () {
       subRedditPosts = [];
       $http.jsonp(url).success(function(data){
         var postsData = data.data.children;
+        lastPost = data.data.after;
         var parsedPosts = [];
 
         for(var i = 0; i < postsData.length; i++){
@@ -149,7 +151,12 @@ define(function () {
     }
 
     this.getSubredditPosts = function(subredditName){
-      var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true';
+      if (lastPost ==  null) {
+        var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true';
+      } else {
+        var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true&after='+lastPost;
+      }
+      
       return this.realGetSubredditPosts(url);
     };
 

@@ -21,6 +21,10 @@ define(['angular', 'js/services/services', 'js/directives/directives',
                      templateUrl: 'views/subreddits.html',
                      controller: 'SubredditsCtrl'
                    })
+                   .when('/r/:id/:page', {
+                     templateUrl: 'views/subreddits.html',
+                     controller: 'SubredditsCtrl'
+                   })
                    .when('/r/:id/:order', {
                      templateUrl: 'views/subreddits.html',
                      controller: 'SubredditsCtrl'

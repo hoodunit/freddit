@@ -5,6 +5,13 @@ define(function () {
   function SubredditsCtrl($scope, $routeParams, RedditAPI) {
     $scope.subredditName = $routeParams.id;
     $scope.orderBy = $routeParams.order;
+    var page = $routeParams.page;
+
+    if(page) {
+      $scope.page = parseInt(page) + 1; 
+    } else {
+      $scope.page = 1; 
+    }
 
     if($scope.orderBy) {
       var promise = RedditAPI.getSubredditPostsSortedBy($scope.subredditName,$scope.orderBy);

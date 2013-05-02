@@ -21,9 +21,16 @@ define(function () {
 
     var subredditPosts = null;
 
-    var lastPost =  null;
     var FIRST_IMAGE_SPECULATIVE_SIZE = 10;
     var DEFAULT_IMAGE_URL = 'http://www.redditstatic.com/icon.png';
+
+
+    //Paging support
+    var nextPostID = null;
+    var previousPostID = null;
+    var lastPage = null;
+    var lastURL = null;
+    var lastSortParam = null;
 
     this.resetSubreddits = function(){
       this.subredditNames = DEFAULT_SUBREDDITS;
@@ -129,42 +136,80 @@ define(function () {
       return imageUrl.promise;
     };
 
-    this.getSubredditPosts = function(subredditName){
-      return this.getSubredditPostsSortedBy(subredditName, 'hot');
+    this.getSubredditPosts = function(subredditName, page){
+      return this.getSubredditPostsSortedBy(subredditName, 'hot' , page);
     };
 
-    this.getHotSubredditPosts = function(subredditName){
-      return this.getSubredditPostsSortedBy(subredditName, 'hot');
+    this.getHotSubredditPosts = function(subredditName, page){
+      return this.getSubredditPostsSortedBy(subredditName, 'hot', page);
     };
 
-    this.getNewSubredditPosts = function(subredditName){
-      return this.getSubredditPostsSortedBy(subredditName, 'new');
+    this.getNewSubredditPosts = function(subredditName, page){
+      return this.getSubredditPostsSortedBy(subredditName, 'new', page);
     };
 
-    this.getRisingSubredditPosts = function(subredditName){
-      return this.getSubredditPostsSortedBy(subredditName, 'rising');
+    this.getRisingSubredditPosts = function(subredditName, page){
+      return this.getSubredditPostsSortedBy(subredditName, 'rising', page);
     };
 
-    this.getTopSubredditPosts = function(subredditName){
-      return this.getSubredditPostsSortedBy(subredditName, 'top');
+    this.getTopSubredditPosts = function(subredditName, page){
+      return this.getSubredditPostsSortedBy(subredditName, 'top', page);
     };
 
-    this.getControversialSubredditPosts = function(subredditName){
-      return this.getSubredditPostsSortedBy(subredditName, 'controversial');
+    this.getControversialSubredditPosts = function(subredditName, page){
+      return this.getSubredditPostsSortedBy(subredditName, 'controversial', page);
     };
 
-    this.getSubredditPostsSortedBy = function(subredditName, sortParam){
+    this.getSubredditPostsSortedBy = function(subredditName, sortParam, page){
       var posts = $q.defer();
-      var url = REDDIT_URL + '/r/' + subredditName
+
+      console.log(sortParam);
+      console.log(lastSortParam);
+
+      if (sortParam != lastSortParam) {
+        nextPostID = null;
+        previousPostID = null;
+        lastPage = null;
+        lastURL = null;
+        page = 1;
+      }
+      lastSortParam = sortParam;
+      console.log('page: ' + page + ' last page: ' + lastPage);
+      if (page == 1) {
+        var url = REDDIT_URL + '/r/' + subredditName
         + '.json?jsonp=JSON_CALLBACK&'
         + this.getNSFWString() + '&sort=' + sortParam;
+        lastPage = 1;
+        lastURL = url;
+      } else if (page > lastPage){
+        //We are loading the next page
+        var url = REDDIT_URL + '/r/' + subredditName
+        + '.json?jsonp=JSON_CALLBACK&'
+        + this.getNSFWString() + '&sort=' + sortParam + '&after=' + nextPostID;
+        lastPage = page;
+        lastURL = url;
+      } else if (page < lastPage) {
+        //We are loading the previous page
+        var url = REDDIT_URL + '/r/' + subredditName
+        + '.json?jsonp=JSON_CALLBACK&'
+        + this.getNSFWString() + '&sort=' + sortParam + '&before=' + previousPostID;
+        lastPage = page;
+        lastURL = url
+      } else {
+          //We are loading the same page than before
+          var url = lastURL;
+      }
+      console.log(url);
       var extractDirectImageLink = this.extractDirectImageLink;
       subredditPosts = [];
       $http.jsonp(url).success(function(data){
+        console.log(data);
+        console.log(data.data.after);
         var postsData = data.data.children;
-        lastPost = data.data.after;
         var parsedPosts = [];
-
+        //For loading next or previouses subreddit images
+        nextPostID = data.data.after;
+        previousPostID = data.data.before;
         for(var i = 0; i < postsData.length; i++){
           var postData = postsData[i].data;
           var over18 = postData['over_18'];
@@ -183,17 +228,8 @@ define(function () {
       }).error(function(data, status) {
         posts.reject('getSubredditPostsSortedBy: API access failed');
       });
-      return posts.promise;
-    }
 
-    this.getSubredditPosts = function(subredditName){
-      if (lastPost ==  null) {
-        var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true';
-      } else {
-        var url = REDDIT_URL + '/r/' + subredditName + '.json?jsonp=JSON_CALLBACK&obey_over18=true&after='+lastPost;
-      }
-      
-      return this.realGetSubredditPosts(url);
+      return posts.promise;
     };
 
     this.extractDirectImageLink = function(url) {

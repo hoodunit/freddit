@@ -17,19 +17,11 @@ define(['angular', 'js/services/services', 'js/directives/directives',
                      templateUrl: 'views/overview.html',
                      controller: 'OverviewCtrl'
                    })
-                   .when('/r/:id', {
+                   .when('/r/:id/:order/:page', {
                      templateUrl: 'views/subreddits.html',
                      controller: 'SubredditsCtrl'
                    })
-                   .when('/r/:id/:page', {
-                     templateUrl: 'views/subreddits.html',
-                     controller: 'SubredditsCtrl'
-                   })
-                   .when('/r/:id/:order', {
-                     templateUrl: 'views/subreddits.html',
-                     controller: 'SubredditsCtrl'
-                   })
-                   .when('/post/:id', {
+                   .when('/post/:subreddit/:order/:page/:id', {
                      templateUrl: 'views/post.html',
                      controller: 'PostCtrl'
                    })

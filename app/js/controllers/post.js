@@ -3,6 +3,12 @@ define(function () {
 
   function PostCtrl($scope, $routeParams, RedditAPI) {
     var postId = $routeParams.id;
+
+
+    $scope.subredditName = $routeParams.subreddit;
+    $scope.order = $routeParams.order;
+    $scope.page = $routeParams.page;
+
     var promise = RedditAPI.getPost(postId);
     promise.then(function(info){
       $scope.post = true;

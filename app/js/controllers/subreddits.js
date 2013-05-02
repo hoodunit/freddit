@@ -10,25 +10,23 @@ define(function () {
     if(page) {
       $scope.page = parseInt(page) + 1; 
     } else {
-      $scope.page = 1; 
+      $scope.page = 0; 
     }
 
     this.getSubredditPosts = function(){
       if($scope.orderBy) {
         var promise;
         if($scope.orderBy === "new"){
-          promise = RedditAPI.getNewSubredditPosts($scope.subredditName);
+          promise = RedditAPI.getNewSubredditPosts($scope.subredditName, $scope.page);
         } else if($scope.orderBy === "rising"){
-          promise = RedditAPI.getRisingSubredditPosts($scope.subredditName);
+          promise = RedditAPI.getRisingSubredditPosts($scope.subredditName, $scope.page);
         } else if($scope.orderBy === "top"){
-          promise = RedditAPI.getTopSubredditPosts($scope.subredditName);
+          promise = RedditAPI.getTopSubredditPosts($scope.subredditName, $scope.page);
         } else if($scope.orderBy === "controversial"){
-          promise = RedditAPI.getControversialSubredditPosts($scope.subredditName);
+          promise = RedditAPI.getControversialSubredditPosts($scope.subredditName, $scope.page);
         } else {
-          promise = RedditAPI.getSubredditPosts($scope.subredditName,$scope.orderBy);
+          promise = RedditAPI.getSubredditPosts($scope.subredditName, $scope.page);
         }
-      } else {
-        promise = RedditAPI.getSubredditPosts($scope.subredditName);
 
         promise.then(function(posts) {
           $scope.havePosts = true;

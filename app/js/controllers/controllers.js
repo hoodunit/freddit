@@ -8,8 +8,8 @@ define(['angular','js/controllers/overview', 'js/controllers/subreddits', 'js/co
 
  	 controllers.controller('SubredditsCtrl', SubredditsCtrl);
  	 controllers.controller('PostCtrl', PostCtrl);
- 	 controllers.controller('OverviewCtrl',OverviewCtrl);
- 	 controllers.controller('SettingsCtrl',SettingsCtrl);
+ 	 controllers.controller('OverviewCtrl', OverviewCtrl);
+ 	 controllers.controller('SettingsCtrl', SettingsCtrl);
 
  	 return controllers;
 });

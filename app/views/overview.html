@@ -40,11 +40,11 @@
 
 <section class="view">
   <div class="image_tile" ng-repeat="subreddit in subreddits" style="background-image: url({{subreddit.first_image_url}});">
-    <a href="" ng-tap="$navigate.go('r/{{subreddit.name}}', 'slide', false)"></a>
+    <a href="" ng-tap="$navigate.go('r/{{subreddit.name}}/hot/0', 'slide', false)"></a>
     <div class="proportional_helper"></div>
 
     <div class="image_tile_title" >
-      <a href="" ng-tap="$navigate.go('r/{{subreddit.name}}', 'slide', false)"></a>
+      <a href="" ng-tap="$navigate.go('r/{{subreddit.name}}/hot/0', 'slide', false)"></a>
       <h2>{{subreddit.name}}<h2>
     </div>
   </div>

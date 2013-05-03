@@ -1,8 +1,12 @@
 define(function () {
   'use strict';
 
-  function SettingsCtrl($scope, RedditAPI) {
-    $scope.nsfw = true;
+  function SettingsCtrl($scope, Settings, RedditAPI) {
+    $scope.nsfwFlag = Settings.getNSFWFlag();
+
+    $scope.checkNSFW = function(){
+      Settings.setNSFWFlag($scope.nsfwFlag);
+    };
 
     $scope.addSubreddit = function(name) {
       alert("Should now be adding " + name);
@@ -15,7 +19,7 @@ define(function () {
     $scope.subreddits = RedditAPI.getSubreddits();
   }
     
-  SettingsCtrl.$inject = ['$scope', 'RedditAPI'];
+  SettingsCtrl.$inject = ['$scope', 'Settings', 'RedditAPI'];
 
   return SettingsCtrl;
 

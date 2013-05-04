@@ -4,28 +4,34 @@
   <header>
 
     <a ng-tap="$navigate.go('/r/{{infoPost.subreddit}}/{{order}}/{{page}}', 'slide', true)"><span class="icon icon-back">back</span></a>
+    <menu type="toolbar">
+      <button ng-click="savePicture()">Save picture</button>
+    </menu>
+    
     <h1>{{infoPost.subreddit}}</h1>
 
   </header>
+
 </section>
+
 <p ng-show="post == false;">No post with that ID</p>
 <section class="view detail" ng-show="post;">
   <div class="image_container" style="background-image: url({{infoPost.url}})">
 
     <div class="fading_button" ng-show="existNextPost;">
-      <a href="" ng-tap="$navigate.go('/post/{{nextPost}}', 'slide', true)"></a>
+      <a href="" ng-tap="$navigate.go('/post/{{subredditName}}/{{order}}/{{page}}/{{nextPost}}', 'slide', true)"></a>
       <div class="proportional_helper"></div>
       <div class="vertically_centered previous_button">
-        <a href="" ng-tap="$navigate.go('/post/{{nextPost}}', 'slide', true)"></a>
+        <a href="" ng-tap="$navigate.go('/post/{{subredditName}}/{{order}}/{{page}}/{{nextPost}}', 'slide', true)"></a>
         &lt;
       </div>
     </div>
 
     <div class="fading_button" ng-show="existPreviousPost;">
-      <a href="" ng-tap="$navigate.go('/post/{{previousPost}}', 'slide', false)"></a>
+      <a href="" ng-tap="$navigate.go('/post/{{subredditName}}/{{order}}/{{page}}/{{previousPost}}', 'slide', false)"></a>
       <div class="proportional_helper"></div>
       <div class="vertically_centered next_button">
-        <a href="" ng-tap="$navigate.go('/post/{{previousPost}}', 'slide', false)"></a>
+        <a href="" ng-tap="$navigate.go('/post/{{subredditName}}/{{order}}/{{page}}/{{previousPost}}', 'slide', false)"></a>
         &gt;
       </div>
     </div>
@@ -35,6 +41,7 @@
     <div class="faux_shadow"></div>
     <div class="title">{{infoPost.title}}</div>
     <div class="author">{{infoPost.author}}</div>
+
     <!--
     <div class="comments">{{infoPost.num_comments}}</div>
     <div class="score">{{infoPost.score}}</div>

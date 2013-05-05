@@ -1,14 +1,16 @@
 <link rel="stylesheet" type="text/css" href="shared/style_unstable/lists.css" />
 <link rel="stylesheet" type="text/css" href="css/tile_view.css" />
 <link rel="stylesheet" type="text/css" href="css/common.css" />
-
+<link rel="stylesheet" type="text/css" href="shared/style/buttons.css">
+<link rel="stylesheet" type="text/css" href="shared/style/switches.css">
+<link rel="stylesheet" type="text/css" href="shared/style/input_areas.css">
+<link rel="stylesheet" type="text/css" href="css/lists.css">
+<link rel="stylesheet" type="text/css" href="shared/style_unstable/drawer.css" />
 
 <section role="region">
   <header>
     <menu type="toolbar">
-      <button ng-show="loggedIn()" ng-click="logout()">Sign out</button>
-      <button ng-show="!loggedIn()" ng-click="login()">Sign in</button>
-      <button ng-tap="$navigate.go('settings', 'modal')">S</button>
+      <button ng-tap="toggleSettingsDrawer();">Settings</button>
     </menu>
     <h1 ng-show="!loggedIn()">Freddit</h1>
     <h1 ng-show="loggedIn()">Freddit ({{username}})</h1>
@@ -25,4 +27,31 @@
       <h2>{{subreddit.name}}<h2>
     </div>
   </div>
+</section>
+
+<section data-type="sidebar" ng-show="showSettingsDrawer;">
+  <header>
+  <menu type="toolbar">
+  </menu>
+  </header>
+  <nav>
+    <ul>
+      <li>
+        <a class="menu-item" ng-show="loggedIn()" ng-click="logout()">Sign out user {{username}}</a>
+        <a class="menu-item" ng-show="!loggedIn()" ng-click="login()">Sign in</a>
+      </li>
+
+      <li>
+        <a ng:click="install()" class="menu-item">Install app</a>
+      </li>
+
+      <li>
+        <a class="menu-item" ng:click="checkNSFW()">Show NSFW</a>
+        <label>
+          <input type="checkbox" ng:model="nsfwFlag" ng:click="checkNSFW()"/>
+          <span></span>
+        </label>
+      </li>
+    </ul>
+  </nav>
 </section>

@@ -16,9 +16,27 @@ define(function () {
       alert("Should now be removing " + name);
     }
 
+    $scope.install = function(name) {
+      alert("installing");
+      //ev.preventDefault();
+      // define the manifest URL
+      var manifest_url = "http:0.0.0.0:8081/manifest.webapp";
+      // install the app
+      var myapp = navigator.mozApps.install(manifest_url);
+      myapp.onsuccess = function(data) {
+      // App is installed, remove button
+        
+        //$scope.installed = true;
+      };
+      myapp.onerror = function() {
+      // App wasn't installed, info is in
+      // installapp.error.name
+     };
+    }
+
     $scope.subreddits = RedditAPI.getSubreddits();
   }
-    
+
   SettingsCtrl.$inject = ['$scope', 'Settings', 'RedditAPI'];
 
   return SettingsCtrl;

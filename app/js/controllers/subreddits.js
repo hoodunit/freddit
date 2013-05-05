@@ -5,6 +5,7 @@ define(function () {
   function SubredditsCtrl($scope, $routeParams, RedditAPI) {
     $scope.subredditName = $routeParams.id;
     $scope.orderBy = $routeParams.order;
+    $scope.showSortSelector = false;
     var page = $routeParams.page;
 
     if(page) {
@@ -35,6 +36,10 @@ define(function () {
           $scope.havePosts = false;
         });
       }
+    };
+
+    $scope.openSortSelector = function() {
+      $scope.showSortSelector = !$scope.showSortSelector;
     };
 
     this.getSubredditPosts();

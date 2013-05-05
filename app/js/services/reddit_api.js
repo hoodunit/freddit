@@ -173,22 +173,25 @@ define(function () {
       lastSortParam = sortParam;
       if (page == 1) {
         var url = REDDIT_URL + '/r/' + subredditName
+        + '/' + sortParam
         + '.json?jsonp=JSON_CALLBACK&'
-        + this.getNSFWString() + '&sort=' + sortParam;
+        + this.getNSFWString();
         lastPage = 1;
         lastURL = url;
       } else if (page > lastPage){
         //We are loading the next page
         var url = REDDIT_URL + '/r/' + subredditName
+        + '/' + sortParam
         + '.json?jsonp=JSON_CALLBACK&'
-        + this.getNSFWString() + '&sort=' + sortParam + '&after=' + nextPostID;
+        + this.getNSFWString() + '&after=' + nextPostID;
         lastPage = page;
         lastURL = url;
       } else if (page < lastPage) {
         //We are loading the previous page
         var url = REDDIT_URL + '/r/' + subredditName
+        + '/' + sortParam
         + '.json?jsonp=JSON_CALLBACK&'
-        + this.getNSFWString() + '&sort=' + sortParam + '&before=' + previousPostID;
+        + this.getNSFWString() + '&before=' + previousPostID;
         lastPage = page;
         lastURL = url
       } else {

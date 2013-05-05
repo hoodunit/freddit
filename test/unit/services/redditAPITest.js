@@ -422,6 +422,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
 
      it('should obey NSFW flag', inject(function(RedditAPI, $rootScope, Settings) {
        var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=false&sort=new';
+       var REQUEST_URL_NOSHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=new';
        var testPost = {'url': 'http://somewhere/test.jpg',
                        'id': 0,
                        'title': 'text',
@@ -463,7 +464,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
        expect(output).toEqual(expectedSafePosts);
 
        Settings.getNSFWFlag.andReturn(true);
-       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(testDataResponse);
+       $httpBackend.expectJSONP(REQUEST_URL_NOSHOW_NSFW).respond(testDataResponse);
        var deferredOutputPromise = RedditAPI.getSubredditPostsSortedBy('test', 'new');
        $httpBackend.flush();
        var output;
@@ -472,7 +473,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
        expect(output).toEqual(expectedSafePosts);
 
        Settings.getNSFWFlag.andReturn(true);
-       $httpBackend.expectJSONP(REQUEST_URL_SHOW_NSFW).respond(testNSFWDataResponse);
+       $httpBackend.expectJSONP(REQUEST_URL_NOSHOW_NSFW).respond(testNSFWDataResponse);
        var deferredOutputPromise = RedditAPI.getSubredditPostsSortedBy('test', 'new');
        $httpBackend.flush();
        var output;

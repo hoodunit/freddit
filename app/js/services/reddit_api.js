@@ -163,9 +163,6 @@ define(function () {
     this.getSubredditPostsSortedBy = function(subredditName, sortParam, page){
       var posts = $q.defer();
 
-      console.log(sortParam);
-      console.log(lastSortParam);
-
       if (sortParam != lastSortParam) {
         nextPostID = null;
         previousPostID = null;
@@ -174,7 +171,6 @@ define(function () {
         page = 1;
       }
       lastSortParam = sortParam;
-      console.log('page: ' + page + ' last page: ' + lastPage);
       if (page == 1) {
         var url = REDDIT_URL + '/r/' + subredditName
         + '.json?jsonp=JSON_CALLBACK&'
@@ -203,8 +199,6 @@ define(function () {
       var extractDirectImageLink = this.extractDirectImageLink;
       subredditPosts = [];
       $http.jsonp(url).success(function(data){
-        console.log(data);
-        console.log(data.data.after);
         var postsData = data.data.children;
         var parsedPosts = [];
         //For loading next or previouses subreddit images

@@ -4,7 +4,8 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
 
   describe('RedditAPI', function() {
     var VALID_ORIGIN = 'http://localhost:8081';
-    var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
+    var DEFAULT_SUBREDDITS = ['pics', 'aww', 'lolcats', 'corgi', 'funny', 'gaming'];
+
 
     it('should contain a RedditAPI service', inject(function(RedditAPI) {
       expect(RedditAPI).not.toBe(null);

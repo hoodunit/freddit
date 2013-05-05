@@ -21,7 +21,7 @@ define(['angular', 'mocks'], function () {
 
 	$controller('SubredditsCtrl', {
 	  $scope: scope,
-          $routeParams: {id: subredditName}
+          $routeParams: {id: subredditName, order: "some"}
 	});
       });			
     });
@@ -31,7 +31,7 @@ define(['angular', 'mocks'], function () {
     });
 
     it('should fetch the latest lolcats posts', inject(function(RedditAPI) {
-      expect(RedditAPI.getSubredditPosts).toHaveBeenCalledWith(subredditName);
+      expect(RedditAPI.getSubredditPosts).toHaveBeenCalledWith(subredditName, 0);
     }));
   });
 });

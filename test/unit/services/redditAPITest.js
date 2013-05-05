@@ -370,7 +370,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
 
    describe('getSubredditPosts', function() {
      var $httpBackend;
-     var REQUEST_URL = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=hot';
+     var REQUEST_URL = 'http://reddit.com/r/test/hot.json?jsonp=JSON_CALLBACK&obey_over18=true';
 
      beforeEach(inject(function($injector){
        $httpBackend = $injector.get('$httpBackend');
@@ -410,7 +410,7 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
 
    describe('getSubredditPostsSortedBy', function() {
      var $httpBackend;
-     var REQUEST_URL = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=new';
+     var REQUEST_URL = 'http://reddit.com/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=true';
 
      beforeEach(inject(function($injector){
        $httpBackend = $injector.get('$httpBackend');
@@ -422,8 +422,8 @@ define(['angular', 'mocks', 'js/services/services'], function (angular, mocks, s
      });
 
      it('should obey NSFW flag', inject(function(RedditAPI, $rootScope, Settings) {
-       var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=false&sort=new';
-       var REQUEST_URL_NOSHOW_NSFW = 'http://reddit.com/r/test.json?jsonp=JSON_CALLBACK&obey_over18=true&sort=new';
+       var REQUEST_URL_SHOW_NSFW = 'http://reddit.com/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=false';
+       var REQUEST_URL_NOSHOW_NSFW = 'http://reddit.com/r/test/new.json?jsonp=JSON_CALLBACK&obey_over18=true';
        var testPost = {'url': 'http://somewhere/test.jpg',
                        'id': 0,
                        'title': 'text',

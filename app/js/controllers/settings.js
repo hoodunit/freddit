@@ -17,11 +17,7 @@ define(function () {
     }
 
     $scope.install = function(name) {
-      alert("installing");
-      //ev.preventDefault();
-      // define the manifest URL
       var manifest_url = "http:0.0.0.0:8081/manifest.webapp";
-      // install the app
       var myapp = navigator.mozApps.install(manifest_url);
       myapp.onsuccess = function(data) {
       // App is installed, remove button

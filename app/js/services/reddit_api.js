@@ -17,7 +17,7 @@ define(function () {
     var accessToken = null;
     this.username = $q.defer();
 
-    var DEFAULT_SUBREDDITS = ['pics', 'mapporn', 'aww', 'cityporn', 'lolcats', 'corgi'];
+    var DEFAULT_SUBREDDITS = ['pics', 'aww', 'lolcats', 'corgi', 'funny', 'gaming'];
 
     var subredditPosts = null;
 
@@ -195,7 +195,6 @@ define(function () {
           //We are loading the same page than before
           var url = lastURL;
       }
-      console.log(url);
       var extractDirectImageLink = this.extractDirectImageLink;
       subredditPosts = [];
       $http.jsonp(url).success(function(data){

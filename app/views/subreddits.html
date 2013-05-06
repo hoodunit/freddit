@@ -7,7 +7,7 @@
   <header>
     <a ng-tap="$navigate.go('/', 'slide', true)"><span class="icon icon-back" style="width:60px">back</span></a>
     <menu type="toolbar">
-      <a href="" ng-tap="openSortSelector()">Sort</a>
+      <a href="" ng-tap="openSortSelector()">{{orderBy}}</a>
     </menu>
     
     <h1>{{subredditName}}</h1>
